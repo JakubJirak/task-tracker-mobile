@@ -1,2 +1,20 @@
 @import "tailwindcss";
 @import "uniwind";
+
+@theme {
+  --color-primary: #0a0a0a;
+  --color-secondary: #262626;
+  --color-border: #1f1f1f;
+  --color-accent: #5121d3;
+  --color-accent-400: #bab3ff;
+  --color-accent-500: #7759f9;
+  --color-accent-600: #6536f1;
+  --color-accent-800: #471eb9;
+  --color-muted: #8c8c8c;
+  --color-inactive: #4d4d4d;
+  --color-darker: #0a0a0a;
+  --color-modalPicker: #525252;
+  --color-disabled: #47230b;
+  --color-destructive: #6e0b0b;
+  --color-text: #fafafa;
+}

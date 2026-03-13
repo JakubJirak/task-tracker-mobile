@@ -1,19 +1,36 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, Text, View } from "react-native";
+import { COLORS } from "@/constants/COLORS";
+import { Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Index() {
   return (
-    <View style={styles.container}>
-      <Text>Edit src/app/index.tsx to edit this screen.</Text>
-      <Ionicons name="home" size={24} color="black" />
-    </View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <View className="bg-primary flex-1 items-center pt-30">
+        <Text className="text-text text-4xl font-light">
+          Vítejte v aplikaci
+        </Text>
+        <Text className="text-accent-600 text-[44px] font-semibold">
+          TASK TRACKER
+        </Text>
+        <View className="mt-auto block w-full px-4 mb-10 gap-4">
+          <TouchableOpacity
+            activeOpacity={0.7}
+            className="bg-text py-4 rounded-lg"
+          >
+            <Text className="text-black text-center text-lg">
+              Pokračovat s Google
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            className="bg-accent py-4 rounded-lg"
+          >
+            <Text className="text-white text-center text-lg">
+              Pokračovat pomocí emailu
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
