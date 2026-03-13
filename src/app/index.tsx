@@ -1,4 +1,5 @@
 import { COLORS } from "@/constants/COLORS";
+import { Link } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -21,14 +22,16 @@ export default function Index() {
               Pokračovat s Google
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            className="bg-accent py-4 rounded-lg"
-          >
-            <Text className="text-white text-center text-lg">
-              Pokračovat pomocí emailu
-            </Text>
-          </TouchableOpacity>
+          <Link href={"/register"} asChild>
+            <TouchableOpacity
+              activeOpacity={0.7}
+              className="bg-accent py-4 rounded-lg"
+            >
+              <Text className="text-white text-center text-lg">
+                Pokračovat pomocí emailu
+              </Text>
+            </TouchableOpacity>
+          </Link>
         </View>
       </View>
     </SafeAreaView>

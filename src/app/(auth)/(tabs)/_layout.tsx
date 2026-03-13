@@ -4,9 +4,11 @@ import { NativeTabs } from "expo-router/unstable-native-tabs";
 export default function RootLayout() {
   return (
     <NativeTabs
-      backgroundColor={COLORS.primary}
-      indicatorColor={COLORS.accent}
-      rippleColor={COLORS.accent}
+      backgroundColor={COLORS.tabbar}
+      indicatorColor="
+#2f196b
+"
+      rippleColor="#663dd4"
     >
       <NativeTabs.Trigger name="home">
         <NativeTabs.Trigger.Label>Domů</NativeTabs.Trigger.Label>
