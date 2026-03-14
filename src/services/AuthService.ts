@@ -16,6 +16,18 @@ export async function login(
   return data;
 }
 
+export async function logout() {
+  const token = await getToken();
+
+  if (!token) {
+    return;
+  }
+
+  await axiosClient.post("/mobile/logout", {});
+
+  await setToken(null);
+}
+
 export async function loadUser() {
   const token = await getToken();
 
@@ -23,9 +35,6 @@ export async function loadUser() {
     return null;
   }
 
-  const { data: user } = await axiosClient.get("/user", {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
+  const { data: user } = await axiosClient.get("/user");
   return user;
 }
