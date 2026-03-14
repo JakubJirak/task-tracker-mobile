@@ -1,3 +1,4 @@
+import { getToken } from "@/services/TokenService";
 import axios from "axios";
 
 const axiosClient = axios.create({
@@ -5,6 +6,16 @@ const axiosClient = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+});
+
+axiosClient.interceptors.request.use(async (req) => {
+  const token = await getToken();
+
+  if (token) {
+    req.headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  return req;
 });
 
 export default axiosClient;
