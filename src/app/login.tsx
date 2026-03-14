@@ -20,17 +20,13 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       await login(email, password, `${Platform.OS} ${Platform.Version}`);
+
       const user = await loadUser();
       setUser(user);
       console.log("Login successful");
     } catch (error) {
       console.error("Login failed:", error);
     }
-  };
-
-  const logUser = async () => {
-    const user = await loadUser();
-    console.log("Logged in user:", user);
   };
 
   return (
@@ -73,12 +69,6 @@ export default function Login() {
           onPress={handleLogin}
         >
           <Text className="text-text text-center font-semibold">LOGIN</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-accent py-3 rounded-xl"
-          onPress={logUser}
-        >
-          <Text className="text-text text-center font-semibold">USER</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
