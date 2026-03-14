@@ -1,0 +1,18 @@
+import { COLORS } from "@/constants/COLORS";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+
+export default function TopBar({ title }: { title: string }) {
+  const router = useRouter();
+
+  return (
+    <View className="flex-row items-center py-4 px-2 gap-4">
+      <TouchableOpacity activeOpacity={0.5} onPress={() => router.back()}>
+        <Ionicons name="chevron-back" size={28} color={COLORS.accent} />
+      </TouchableOpacity>
+      <Text className="text-text  text-xl font-semibold">{title}</Text>
+    </View>
+  );
+}

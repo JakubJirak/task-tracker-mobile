@@ -8,7 +8,11 @@ export default function RootLayout() {
       edges={["top", "left", "right"]}
       style={{ flex: 1, backgroundColor: COLORS.primary }}
     >
-      <Stack>
+      <Stack
+        screenOptions={{
+          contentStyle: { backgroundColor: COLORS.primary },
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </SafeAreaView>

@@ -1,3 +1,4 @@
+import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import * as React from "react";
 import { FAB, PaperProvider, Portal } from "react-native-paper";
 import { COLORS } from "../../constants/COLORS";
@@ -15,24 +16,24 @@ const HomeFAB = () => {
         <FAB.Group
           open={open}
           visible
-          backdropColor="rgba(10, 10, 10, 0.8)"
+          backdropColor="rgba(10, 10, 10, 0.4)"
           icon={open ? "calendar-today" : "plus"}
           fabStyle={{ backgroundColor: COLORS.accent }}
           actions={[
             {
-              icon: "table",
+              icon: "school",
               label: "Škola",
-              onPress: () => console.log("Pressed star"),
+              onPress: () => TrueSheet.present("addSchool"),
             },
             {
               icon: "bell",
               label: "Události",
-              onPress: () => console.log("Pressed email"),
+              onPress: () => TrueSheet.present("addReminder"),
             },
             {
               icon: "check",
               label: "Úkoly",
-              onPress: () => console.log("Pressed notifications"),
+              onPress: () => TrueSheet.present("addTask"),
             },
           ]}
           onStateChange={onStateChange}
