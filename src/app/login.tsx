@@ -1,6 +1,7 @@
 import { COLORS } from "@/constants/COLORS";
-import axios from "axios";
-import { useRef, useState } from "react";
+import AuthContext from "@/contexts/AuthContext";
+import { loadUser, login } from "@/services/AuthService";
+import { useContext, useRef, useState } from "react";
 import {
   Platform,
   Text,
@@ -11,28 +12,25 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Login() {
+  const { setUser } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const passwordInputRef = useRef<TextInput>(null);
-  const [token, setToken] = useState<string | null>(null);
 
   const handleLogin = async () => {
     try {
-      console.log("Logging in with:", { email, password });
-      const data = await axios.post(
-        "http://192.168.1.25:8000/api/mobile/login",
-        {
-          email,
-          password,
-          device_name: `${Platform.OS} ${Platform.Version}`,
-        },
-        { headers: { "Content-Type": "application/json" } },
-      );
-      console.log("Login successful:", data.data);
-      setToken(data.data.token);
+      await login(email, password, `${Platform.OS} ${Platform.Version}`);
+      const user = await loadUser();
+      setUser(user);
+      console.log("Login successful");
     } catch (error) {
-      console.error("Error logging in:", error);
+      console.error("Login failed:", error);
     }
+  };
+
+  const logUser = async () => {
+    const user = await loadUser();
+    console.log("Logged in user:", user);
   };
 
   return (
@@ -75,6 +73,12 @@ export default function Login() {
           onPress={handleLogin}
         >
           <Text className="text-text text-center font-semibold">LOGIN</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="bg-accent py-3 rounded-xl"
+          onPress={logUser}
+        >
+          <Text className="text-text text-center font-semibold">USER</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

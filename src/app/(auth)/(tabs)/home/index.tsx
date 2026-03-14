@@ -3,11 +3,15 @@ import AddSchoolSheet from "@/components/home/addSchoolSheet";
 import AddTaskSheet from "@/components/home/addTaskSheet";
 import HomeFAB from "@/components/home/home-FAB";
 import { COLORS } from "@/constants/COLORS";
+import AuthContext from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
+import { useContext } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function Home() {
+  const { user } = useContext(AuthContext);
+
   return (
     <View className="bg-primary relative flex-1">
       <View className="flex flex-row items-center">
@@ -15,6 +19,8 @@ export default function Home() {
           <Ionicons name="home-outline" size={24} color={COLORS.accent} />
           <Text className="text-text text-xl font-bold">Domů</Text>
         </View>
+
+        <Text className="text-text">{user?.data?.name}</Text>
 
         <Link href={"/(auth)/(tabs)/home/profil"} asChild>
           <TouchableOpacity
