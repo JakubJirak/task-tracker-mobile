@@ -1,5 +1,6 @@
 import { TagResource } from "@/client";
 import { tagsIndexOptions } from "@/client/@tanstack/react-query.gen";
+import AddTagSheet from "@/components/home/profil/tags/addTagSheet";
 import TagGroup from "@/components/home/profil/tags/tagGroup";
 import TopBar from "@/components/topBar";
 import { useQuery } from "@tanstack/react-query";
@@ -33,6 +34,9 @@ export default function Home() {
           tags={tags.reminder}
         />
         <TagGroup title="Škola" icon="school-outline" tags={tags.school} />
+      </View>
+      <View className="absolute left-0 right-7 bottom-22">
+        <AddTagSheet />
       </View>
     </View>
   );
