@@ -32,6 +32,13 @@ export default function Index() {
               </Text>
             </TouchableOpacity>
           </Link>
+          <Link href={"/login"} asChild>
+            <TouchableOpacity activeOpacity={0.7} className="py-2 rounded-lg">
+              <Text className="text-center text-base text-accent-500">
+                Už máte účet? Přihlaste se!
+              </Text>
+            </TouchableOpacity>
+          </Link>
         </View>
       </View>
     </SafeAreaView>
