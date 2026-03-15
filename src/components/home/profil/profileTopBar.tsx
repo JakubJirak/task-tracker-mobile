@@ -21,13 +21,9 @@ export default function ProfileTopBar() {
           await logout();
           setUser(null);
         }}
+        className="bg-secondary pl-2 py-1.25 pr-1 rounded-lg flex-row items-center"
       >
-        <Ionicons
-          name="log-out-outline"
-          size={28}
-          color={COLORS.accent}
-          className="mr-1"
-        />
+        <Ionicons name="log-out-outline" size={24} color={COLORS.text} />
       </TouchableOpacity>
     </View>
   );

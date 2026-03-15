@@ -18,8 +18,14 @@ export default function ProfileLink({ href, icon, text }: ProfileLinkProps) {
     <Link href={href} asChild>
       <TouchableOpacity activeOpacity={0.7}>
         <View className="bg-secondary gap-4 flex-row items-center w-full p-4 rounded-xl">
-          <Ionicons name={icon} size={28} color={COLORS.accent} />
+          <Ionicons name={icon} size={26} color={COLORS.accent} />
           <Text className="text-white text-lg">{text}</Text>
+          <Ionicons
+            name="chevron-forward"
+            size={24}
+            color={COLORS.muted}
+            style={{ marginLeft: "auto" }}
+          />
         </View>
       </TouchableOpacity>
     </Link>
