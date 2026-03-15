@@ -22,6 +22,9 @@ export default function AddTaskSheet() {
         <TouchableOpacity onPress={dismiss}>
           <Text>Dismiss</Text>
         </TouchableOpacity>
+        <View className="size-20 m-5 bg-secondary">
+          <Text className="text-white">Add Task Sheet</Text>
+        </View>
       </TrueSheet>
     </View>
   );

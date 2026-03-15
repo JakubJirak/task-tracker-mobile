@@ -8,7 +8,7 @@ export default function TopBar({ title }: { title: string }) {
   const router = useRouter();
 
   return (
-    <View className="flex-row items-center py-4 px-2 gap-4">
+    <View className="flex-row items-center py-4 gap-4">
       <TouchableOpacity activeOpacity={0.5} onPress={() => router.back()}>
         <Ionicons name="chevron-back" size={28} color={COLORS.accent} />
       </TouchableOpacity>

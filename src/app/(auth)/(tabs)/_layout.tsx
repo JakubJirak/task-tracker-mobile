@@ -4,8 +4,8 @@ import { NativeTabs } from "expo-router/unstable-native-tabs";
 export default function RootLayout() {
   return (
     <NativeTabs
-      backgroundColor={COLORS.tabbar}
-      indicatorColor="#2f196b"
+      backgroundColor={COLORS.sheet}
+      indicatorColor="#211347"
       rippleColor="#663dd4"
       tintColor={COLORS.tint}
     >
