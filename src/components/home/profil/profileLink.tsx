@@ -22,7 +22,7 @@ export default function ProfileLink({ href, icon, text }: ProfileLinkProps) {
           <Text className="text-white text-lg">{text}</Text>
           <Ionicons
             name="chevron-forward"
-            size={24}
+            size={20}
             color={COLORS.muted}
             style={{ marginLeft: "auto" }}
           />
