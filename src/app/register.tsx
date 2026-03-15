@@ -31,7 +31,6 @@ export default function Register() {
         confirmPassword,
         `${Platform.OS} ${Platform.Version}`,
       );
-      console.log("Registration successful");
       const user = await loadUser();
       setUser(user);
     } catch (error) {

@@ -1,3 +1,4 @@
+import { tagsIndexOptions } from "@/client/@tanstack/react-query.gen";
 import AddReminderSheet from "@/components/home/addReminderSheet";
 import AddSchoolSheet from "@/components/home/addSchoolSheet";
 import AddTaskSheet from "@/components/home/addTaskSheet";
@@ -5,12 +6,17 @@ import HomeFAB from "@/components/home/home-FAB";
 import { COLORS } from "@/constants/COLORS";
 import AuthContext from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "expo-router";
 import { useContext } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 export default function Home() {
   const { user } = useContext(AuthContext);
+
+  const { data: tags } = useQuery({
+    ...tagsIndexOptions(),
+  });
 
   return (
     <View className="bg-primary relative flex-1">
@@ -31,6 +37,10 @@ export default function Home() {
           </TouchableOpacity>
         </Link>
       </View>
+
+      <TouchableOpacity onPress={() => console.log(tags)}>
+        <Text className="text-text">Tags:</Text>
+      </TouchableOpacity>
 
       <Link href={"/(auth)/(tabs)/home/school"}>
         <Text className="text-text">School</Text>

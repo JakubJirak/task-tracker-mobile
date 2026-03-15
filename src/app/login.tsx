@@ -20,10 +20,8 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       await login(email, password, `${Platform.OS} ${Platform.Version}`);
-
       const user = await loadUser();
       setUser(user);
-      console.log("Login successful");
     } catch (error) {
       console.error("Login failed:", error);
     }
