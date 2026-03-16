@@ -1,0 +1,30 @@
+import AddProjectSheet from "@/components/projects/addProjectSheet";
+import { useProjects } from "@/hooks/useProjects";
+import { ActivityIndicator, Text, View } from "react-native";
+
+export default function Projects() {
+  const { uncompletedProjects, isLoading, isError } = useProjects();
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#b69cff" />;
+  }
+
+  return (
+    <View className="bg-primary relative flex-1 px-3">
+      {isError ? (
+        <Text className="text-text">Nepodařilo se načíst projekty.</Text>
+      ) : (
+        <View className="gap-2">
+          {uncompletedProjects.map((project) => (
+            <Text key={project.id} className="text-text">
+              {project.title}
+            </Text>
+          ))}
+        </View>
+      )}
+      <View className="absolute left-0 right-7 bottom-22">
+        <AddProjectSheet />
+      </View>
+    </View>
+  );
+}
