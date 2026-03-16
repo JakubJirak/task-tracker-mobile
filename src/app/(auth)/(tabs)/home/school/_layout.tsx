@@ -26,7 +26,7 @@ export default function RootLayout() {
           lazy: true,
           lazyPreloadDistance: 1,
           tabBarStyle: { backgroundColor: COLORS.primary },
-          tabBarItemStyle: { paddingHorizontal: 2, paddingVertical: 0 },
+          tabBarItemStyle: { paddingHorizontal: 0, paddingVertical: 0 },
           tabBarIndicatorStyle: { backgroundColor: COLORS.tint },
           tabBarActiveTintColor: COLORS.tint,
           tabBarInactiveTintColor: COLORS.muted,
@@ -40,23 +40,23 @@ export default function RootLayout() {
       >
         <ExpoRouterMaterialTopTabs.Screen
           name="index"
-          options={{ title: "Vsechny" }}
+          options={{ title: "Všechny" }}
         />
         <ExpoRouterMaterialTopTabs.Screen
           name="this-week"
-          options={{ title: "This week" }}
+          options={{ title: "Tento týd." }}
         />
         <ExpoRouterMaterialTopTabs.Screen
           name="next-week"
-          options={{ title: "Next week" }}
+          options={{ title: "Příští týd." }}
         />
         <ExpoRouterMaterialTopTabs.Screen
           name="later"
-          options={{ title: "Later" }}
+          options={{ title: "Později" }}
         />
         <ExpoRouterMaterialTopTabs.Screen
           name="before"
-          options={{ title: "Before" }}
+          options={{ title: "Předešlé" }}
         />
       </ExpoRouterMaterialTopTabs>
     </>
