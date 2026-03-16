@@ -22,7 +22,6 @@ export default function AddProjectSheet() {
         className="bg-accent p-4 rounded-2xl absolute right-0"
         activeOpacity={0.6}
       >
-        {/* <Ionicons name="add" size={24} color="white" /> */}
         <MaterialDesignIcons name="plus" size={24} color="white" />
       </TouchableOpacity>
       <TrueSheet

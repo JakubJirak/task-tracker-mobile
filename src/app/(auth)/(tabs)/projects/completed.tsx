@@ -1,4 +1,3 @@
-import AddProjectSheet from "@/components/projects/addProjectSheet";
 import { useProjects } from "@/hooks/useProjects";
 import { ActivityIndicator, Text, View } from "react-native";
 
@@ -25,9 +24,6 @@ export default function Projects() {
           ))}
         </View>
       )}
-      <View className="absolute left-0 right-7 bottom-22">
-        <AddProjectSheet />
-      </View>
     </View>
   );
 }

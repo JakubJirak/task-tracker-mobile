@@ -1,3 +1,4 @@
+import AddSchoolSheet from "@/components/home/addSchoolSheet";
 import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
 import {
@@ -7,6 +8,7 @@ import {
 } from "@react-navigation/material-top-tabs";
 import { ParamListBase, TabNavigationState } from "@react-navigation/native";
 import { withLayoutContext } from "expo-router";
+import { View } from "react-native";
 
 const MaterialTopTabs = createMaterialTopTabNavigator();
 
@@ -19,7 +21,7 @@ const ExpoRouterMaterialTopTabs = withLayoutContext<
 
 export default function RootLayout() {
   return (
-    <>
+    <View className="flex-1">
       <EventsTopBar title="Škola" />
       <ExpoRouterMaterialTopTabs
         screenOptions={{
@@ -59,6 +61,13 @@ export default function RootLayout() {
           options={{ title: "Předešlé" }}
         />
       </ExpoRouterMaterialTopTabs>
-    </>
+
+      <View
+        pointerEvents="box-none"
+        className="absolute left-0 right-7 bottom-22"
+      >
+        <AddSchoolSheet />
+      </View>
+    </View>
   );
 }

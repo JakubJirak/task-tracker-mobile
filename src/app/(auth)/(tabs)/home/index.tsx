@@ -1,6 +1,6 @@
-import AddReminderSheet from "@/components/home/addReminderSheet";
-import AddSchoolSheet from "@/components/home/addSchoolSheet";
-import AddTaskSheet from "@/components/home/addTaskSheet";
+import AddReminderSheet from "@/components/home/FAB/addReminderSheet";
+import AddSchoolSheet from "@/components/home/FAB/addSchoolSheet";
+import AddTaskSheet from "@/components/home/FAB/addTaskSheet";
 import HomeFAB from "@/components/home/home-FAB";
 import { COLORS } from "@/constants/COLORS";
 import AuthContext from "@/contexts/AuthContext";

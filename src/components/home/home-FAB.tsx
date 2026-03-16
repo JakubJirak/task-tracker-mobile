@@ -23,17 +23,17 @@ const HomeFAB = () => {
             {
               icon: "school",
               label: "Škola",
-              onPress: () => TrueSheet.present("addSchool"),
+              onPress: () => TrueSheet.present("addSchoolFAB"),
             },
             {
               icon: "bell",
               label: "Události",
-              onPress: () => TrueSheet.present("addReminder"),
+              onPress: () => TrueSheet.present("addReminderFAB"),
             },
             {
               icon: "check",
               label: "Úkoly",
-              onPress: () => TrueSheet.present("addTask"),
+              onPress: () => TrueSheet.present("addTaskFAB"),
             },
           ]}
           onStateChange={onStateChange}
