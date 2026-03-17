@@ -1,5 +1,7 @@
+import SchoolLi from "@/components/home/school/schoolLi";
 import { useSchool } from "@/hooks/useSchool";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { ActivityIndicator, Text, View } from "react-native";
 
 export default function SchoolNextWeek() {
   const { nextWeekSchool, isLoading, isError } = useSchool();
@@ -8,24 +10,22 @@ export default function SchoolNextWeek() {
     return <ActivityIndicator size="large" color="#b69cff" />;
   }
 
-  return (
-    <View className="bg-primary relative flex-1 px-3">
-      {isError ? (
+  if (isError) {
+    return (
+      <View className="bg-primary relative flex-1 px-3">
         <Text className="text-text mt-3">Nepodařilo se načíst školu.</Text>
-      ) : (
-        <ScrollView className="mt-3" showsVerticalScrollIndicator={false}>
-          <View className="gap-2 pb-24">
-            <Text className="text-text">
-              Příští týden ({nextWeekSchool.length})
-            </Text>
-            {nextWeekSchool.map((event) => (
-              <Text key={event.id} className="text-text">
-                {event.title}
-              </Text>
-            ))}
-          </View>
-        </ScrollView>
-      )}
-    </View>
+      </View>
+    );
+  }
+
+  return (
+    <FlashList
+      data={nextWeekSchool}
+      renderItem={({ item }) => <SchoolLi school={item} />}
+      keyExtractor={(item) => item.id.toString()}
+      className="mt-1 px-2"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 100 }}
+    />
   );
 }

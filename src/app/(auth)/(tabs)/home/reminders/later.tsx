@@ -1,5 +1,7 @@
+import ReminderLi from "@/components/home/reminders/reminderLi";
 import { useReminders } from "@/hooks/useReminders";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { ActivityIndicator, Text, View } from "react-native";
 
 export default function RemindersLater() {
   const { laterReminders, isLoading, isError } = useReminders();
@@ -8,22 +10,22 @@ export default function RemindersLater() {
     return <ActivityIndicator size="large" color="#b69cff" />;
   }
 
-  return (
-    <View className="bg-primary relative flex-1 px-3">
-      {isError ? (
+  if (isError) {
+    return (
+      <View className="bg-primary relative flex-1 px-3">
         <Text className="text-text mt-3">Nepodařilo se načíst připomínky.</Text>
-      ) : (
-        <ScrollView className="mt-3" showsVerticalScrollIndicator={false}>
-          <View className="gap-2 pb-24">
-            <Text className="text-text">Později ({laterReminders.length})</Text>
-            {laterReminders.map((event) => (
-              <Text key={event.id} className="text-text">
-                {event.title}
-              </Text>
-            ))}
-          </View>
-        </ScrollView>
-      )}
-    </View>
+      </View>
+    );
+  }
+
+  return (
+    <FlashList
+      data={laterReminders}
+      renderItem={({ item }) => <ReminderLi reminder={item} />}
+      keyExtractor={(item) => item.id.toString()}
+      className="mt-1 px-2"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 100 }}
+    />
   );
 }
