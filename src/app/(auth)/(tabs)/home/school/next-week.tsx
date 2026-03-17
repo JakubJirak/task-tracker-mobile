@@ -13,7 +13,7 @@ export default function SchoolNextWeek() {
   if (isError) {
     return (
       <View className="bg-primary relative flex-1 px-3">
-        <Text className="text-text mt-3">Nepodařilo se načíst školu.</Text>
+        <Text className="text-text mt-3">Nepodařilo se načíst události.</Text>
       </View>
     );
   }
@@ -23,7 +23,7 @@ export default function SchoolNextWeek() {
       data={nextWeekSchool}
       renderItem={({ item }) => <SchoolLi school={item} />}
       keyExtractor={(item) => item.id.toString()}
-      className="mt-1 px-2"
+      className="mt-2 px-2"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     />

@@ -57,7 +57,7 @@ export default function Home() {
         )
       }
       keyExtractor={(item) => item.id}
-      className="mt-1 px-2"
+      className="mt-2 px-2"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     />

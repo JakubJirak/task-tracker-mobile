@@ -23,7 +23,7 @@ export default function RemindersThisWeek() {
       data={thisWeekReminders}
       renderItem={({ item }) => <ReminderLi reminder={item} />}
       keyExtractor={(item) => item.id.toString()}
-      className="mt-1 px-2"
+      className="mt-2 px-2"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     />

@@ -39,7 +39,7 @@ export default function Home() {
   if (isError) {
     return (
       <View className="bg-primary relative flex-1 px-3">
-        <Text className="text-text mt-3">Nepodařilo se načíst školu.</Text>
+        <Text className="text-text mt-3">Nepodařilo se načíst události.</Text>
       </View>
     );
   }
@@ -57,7 +57,7 @@ export default function Home() {
         )
       }
       keyExtractor={(item) => item.id}
-      className="mt-1 px-2"
+      className="mt-2 px-2"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     />
