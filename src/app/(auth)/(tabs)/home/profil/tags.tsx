@@ -13,6 +13,7 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 export default function Home() {
   const { data, isLoading } = useQuery({
     ...tagsIndexOptions(),
+    staleTime: 60_000,
   });
 
   const tagDetailSheet = useRef<TagDetailSheetHandle>(null);
