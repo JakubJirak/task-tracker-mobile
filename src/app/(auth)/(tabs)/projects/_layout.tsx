@@ -31,7 +31,7 @@ export default function RootLayout() {
           tabBarInactiveTintColor: COLORS.muted,
           swipeEnabled: true,
           tabBarLabelStyle: {
-            fontSize: 18,
+            fontSize: 16,
             textTransform: "none",
             fontWeight: "600",
           },
