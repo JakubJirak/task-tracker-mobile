@@ -1,5 +1,7 @@
+import ReminderLi from "@/components/home/reminders/reminderLi";
 import { useReminders } from "@/hooks/useReminders";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { ActivityIndicator } from "react-native";
 
 export default function RemindersBefore() {
   const { beforeReminders, isLoading, isError } = useReminders();
@@ -9,23 +11,11 @@ export default function RemindersBefore() {
   }
 
   return (
-    <View className="bg-primary relative flex-1 px-3">
-      {isError ? (
-        <Text className="text-text mt-3">Nepodařilo se načíst připomínky.</Text>
-      ) : (
-        <ScrollView className="mt-3" showsVerticalScrollIndicator={false}>
-          <View className="gap-2 pb-24">
-            <Text className="text-text">
-              Předešlé ({beforeReminders.length})
-            </Text>
-            {beforeReminders.map((event) => (
-              <Text key={event.id} className="text-text">
-                {event.title}
-              </Text>
-            ))}
-          </View>
-        </ScrollView>
-      )}
-    </View>
+    <FlashList
+      data={beforeReminders}
+      renderItem={({ item }) => <ReminderLi reminder={item} />}
+      keyExtractor={(item) => item.id.toString()}
+      className="mt-1 px-2"
+    />
   );
 }

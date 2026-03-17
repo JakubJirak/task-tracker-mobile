@@ -1,4 +1,4 @@
-import AddSchoolSheet from "@/components/home/addSchoolSheet";
+import AddSchoolSheet from "@/components/home/school/addSchoolSheet";
 import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
 import {

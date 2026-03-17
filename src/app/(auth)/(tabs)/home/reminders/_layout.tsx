@@ -1,4 +1,4 @@
-import AddReminderSheet from "@/components/home/addReminderSheet";
+import AddReminderSheet from "@/components/home/reminders/addReminderSheet";
 import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
 import {

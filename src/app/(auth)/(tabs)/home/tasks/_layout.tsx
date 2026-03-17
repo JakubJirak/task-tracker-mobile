@@ -1,4 +1,4 @@
-import AddTaskSheet from "@/components/home/addTaskSheet";
+import AddTaskSheet from "@/components/home/tasks/addTaskSheet";
 import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
 import {

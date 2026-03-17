@@ -1,5 +1,7 @@
+import SchoolLi from "@/components/home/school/schoolLi";
 import { useSchool } from "@/hooks/useSchool";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { ActivityIndicator } from "react-native";
 
 export default function SchoolBefore() {
   const { beforeSchool, isLoading, isError } = useSchool();
@@ -9,21 +11,11 @@ export default function SchoolBefore() {
   }
 
   return (
-    <View className="bg-primary relative flex-1 px-3">
-      {isError ? (
-        <Text className="text-text mt-3">Nepodařilo se načíst školu.</Text>
-      ) : (
-        <ScrollView className="mt-3" showsVerticalScrollIndicator={false}>
-          <View className="gap-2 pb-24">
-            <Text className="text-text">Předešlé ({beforeSchool.length})</Text>
-            {beforeSchool.map((event) => (
-              <Text key={event.id} className="text-text">
-                {event.title}
-              </Text>
-            ))}
-          </View>
-        </ScrollView>
-      )}
-    </View>
+    <FlashList
+      data={beforeSchool}
+      renderItem={({ item }) => <SchoolLi school={item} />}
+      keyExtractor={(item) => item.id.toString()}
+      className="mt-1 px-2"
+    />
   );
 }
