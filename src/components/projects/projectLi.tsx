@@ -1,12 +1,20 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
 import { ProjectResource } from "@/client";
-import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/COLORS";
+import { Ionicons } from "@expo/vector-icons";
+import { format, parseISO } from "date-fns";
+import { cs } from "date-fns/locale";
 import { useRouter } from "expo-router";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { ProgressBar } from "react-native-paper";
+import Tag from "../tag";
 
 export default function ProjectLi({ project }: { project: ProjectResource }) {
   const router = useRouter();
+  const parsedCreatedAt = parseISO(project.created_at);
+  const formattedCreatedAt = Number.isNaN(parsedCreatedAt.getTime())
+    ? project.created_at
+    : format(parsedCreatedAt, "d. MMMM yyyy", { locale: cs });
 
   const handlePress = () => {
     router.push({
@@ -18,20 +26,30 @@ export default function ProjectLi({ project }: { project: ProjectResource }) {
   return (
     <TouchableOpacity
       onPress={handlePress}
+      activeOpacity={0.6}
       className="bg-secondary px-4 pb-4 pt-3 rounded-xl"
     >
       <View className="flex-row items-center mb-2">
         <Text className="text-text text-lg font-medium flex-1">
           {project.title}
         </Text>
-        <View>
-          <Text>{project.tag?.name}</Text>
-        </View>
+        {project.tag && <Tag tag={project.tag} />}
       </View>
 
-      <View className="flex-row gap-1">
-        <Ionicons name="calendar-outline" size={20} color={COLORS.muted} />
-        <Text className="text-muted">{project.created_at}</Text>
+      <View className="flex-row gap-1.5 items-center">
+        <Ionicons name="calendar-outline" size={16} color={COLORS.muted} />
+        <Text className="text-muted">{formattedCreatedAt}</Text>
+      </View>
+
+      <View className="flex-row gap-2 mt-3 items-center">
+        <ProgressBar
+          progress={project.completion_percentage / 100}
+          color={COLORS.accent}
+          className="w-[90%]"
+        />
+        <Text className="text-text text-right text-sm">
+          {project.completion_percentage}%
+        </Text>
       </View>
     </TouchableOpacity>
   );
