@@ -22,7 +22,7 @@ const ExpoRouterMaterialTopTabs = withLayoutContext<
 export default function RootLayout() {
   return (
     <View className="flex-1">
-      <EventsTopBar title="Připomínky" />
+      <EventsTopBar title="Události" />
       <ExpoRouterMaterialTopTabs
         screenOptions={{
           lazy: true,
@@ -42,7 +42,7 @@ export default function RootLayout() {
       >
         <ExpoRouterMaterialTopTabs.Screen
           name="index"
-          options={{ title: "Vsechny" }}
+          options={{ title: "Všechny" }}
         />
         <ExpoRouterMaterialTopTabs.Screen
           name="this-week"

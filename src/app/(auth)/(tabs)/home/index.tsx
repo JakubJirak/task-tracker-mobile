@@ -35,14 +35,14 @@ export default function Home() {
       </View>
 
       <View className="gap-3">
-        <Link href={"/(auth)/(tabs)/home/school"}>
-          <Text className="text-text">School</Text>
-        </Link>
         <Link href={"/(auth)/(tabs)/home/tasks"}>
-          <Text className="text-text">Tasks</Text>
+          <Text className="text-text">Úkoly</Text>
         </Link>
         <Link href={"/(auth)/(tabs)/home/reminders"}>
-          <Text className="text-text">Reminders</Text>
+          <Text className="text-text">Události</Text>
+        </Link>
+        <Link href={"/(auth)/(tabs)/home/school"}>
+          <Text className="text-text">Škola</Text>
         </Link>
       </View>
 

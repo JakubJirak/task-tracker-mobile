@@ -21,9 +21,9 @@ const HomeFAB = () => {
           fabStyle={{ backgroundColor: COLORS.accent }}
           actions={[
             {
-              icon: "school",
-              label: "Škola",
-              onPress: () => TrueSheet.present("addSchoolFAB"),
+              icon: "check",
+              label: "Úkoly",
+              onPress: () => TrueSheet.present("addTaskFAB"),
             },
             {
               icon: "bell",
@@ -31,9 +31,9 @@ const HomeFAB = () => {
               onPress: () => TrueSheet.present("addReminderFAB"),
             },
             {
-              icon: "check",
-              label: "Úkoly",
-              onPress: () => TrueSheet.present("addTaskFAB"),
+              icon: "school",
+              label: "Škola",
+              onPress: () => TrueSheet.present("addSchoolFAB"),
             },
           ]}
           onStateChange={onStateChange}

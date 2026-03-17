@@ -1,21 +1,40 @@
 import { TagResource } from "@/client";
 import { tagsIndexOptions } from "@/client/@tanstack/react-query.gen";
 import AddTagSheet from "@/components/home/profil/tags/addTagSheet";
+import TagDetailSheet, {
+  TagDetailSheetHandle,
+} from "@/components/home/profil/tags/tagDetailSheet";
 import TagGroup from "@/components/home/profil/tags/tagGroup";
 import TopBar from "@/components/topBar";
 import { useQuery } from "@tanstack/react-query";
-import { ActivityIndicator, View } from "react-native";
+import { useRef, useState } from "react";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 export default function Home() {
   const { data, isLoading } = useQuery({
     ...tagsIndexOptions(),
   });
 
+  const tagDetailSheet = useRef<TagDetailSheetHandle>(null);
+  const [selectedTag, setSelectedTag] = useState<Pick<
+    TagResource,
+    "id" | "name" | "color"
+  > | null>(null);
+
   const tags = data as unknown as {
     project: TagResource[];
     reminder: TagResource[];
     task: TagResource[];
     school: TagResource[];
+  };
+
+  const handleTagPress = async (tag: TagResource) => {
+    setSelectedTag({
+      id: tag.id,
+      name: tag.name,
+      color: tag.color,
+    });
+    await tagDetailSheet.current?.present();
   };
 
   if (isLoading) {
@@ -25,19 +44,38 @@ export default function Home() {
   return (
     <View className="bg-primary relative flex-1 px-3">
       <TopBar title="Tagy" />
-      <View className="gap-5 mt-2">
-        <TagGroup title="Projekty" icon="folder-outline" tags={tags.project} />
-        <TagGroup title="Úkoly" icon="list-outline" tags={tags.task} />
-        <TagGroup
-          title="Připomínky"
-          icon="notifications-outline"
-          tags={tags.reminder}
-        />
-        <TagGroup title="Škola" icon="school-outline" tags={tags.school} />
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="gap-5 mt-2 pb-30">
+          <TagGroup
+            title="Projekty"
+            icon="folder-outline"
+            tags={tags.project}
+            onTagPress={handleTagPress}
+          />
+          <TagGroup
+            title="Úkoly"
+            icon="list-outline"
+            tags={tags.task}
+            onTagPress={handleTagPress}
+          />
+          <TagGroup
+            title="Připomínky"
+            icon="notifications-outline"
+            tags={tags.reminder}
+            onTagPress={handleTagPress}
+          />
+          <TagGroup
+            title="Škola"
+            icon="school-outline"
+            tags={tags.school}
+            onTagPress={handleTagPress}
+          />
+        </View>
+      </ScrollView>
       <View className="absolute left-0 right-7 bottom-22">
         <AddTagSheet />
       </View>
+      <TagDetailSheet ref={tagDetailSheet} tag={selectedTag} />
     </View>
   );
 }

@@ -9,10 +9,12 @@ const TagGroup = ({
   title,
   icon,
   tags,
+  onTagPress,
 }: {
   title: string;
   icon: IoniconName;
   tags: TagResource[];
+  onTagPress: (tag: TagResource) => void;
 }) => {
   return (
     <View>
@@ -21,11 +23,15 @@ const TagGroup = ({
         <Text className="text-lg text-text font-medium">{title}</Text>
       </View>
 
-      <View className="mt-2 flex-row flex-wrap">
+      <View className="mt-2 gap-2">
         {tags.map((item) => (
-          <View key={item.id} className="mr-2 mb-2">
-            <TagLi name={item.name} color={item.color} />
-          </View>
+          <TagLi
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            color={item.color}
+            onPress={() => onTagPress(item)}
+          />
         ))}
       </View>
     </View>
