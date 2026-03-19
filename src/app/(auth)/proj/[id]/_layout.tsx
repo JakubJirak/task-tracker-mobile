@@ -70,11 +70,11 @@ export default function RootLayout() {
           />
           <ExpoRouterMaterialTopTabs.Screen
             name="subproject"
-            options={{ title: "Podprojekt" }}
+            options={{ title: "Podprojekty" }}
           />
           <ExpoRouterMaterialTopTabs.Screen
             name="tasks"
-            options={{ title: "Ukoly" }}
+            options={{ title: "Úkoly" }}
           />
         </ExpoRouterMaterialTopTabs>
       </View>
