@@ -1,6 +1,8 @@
+import ProjectTaskLi from "@/components/projects/projectTaskLi";
 import { useProjectContext } from "@/contexts/ProjectContext";
+import { FlashList } from "@shopify/flash-list";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
 const TASKS = [
   {
@@ -30,27 +32,33 @@ const TASKS = [
 ];
 
 export default function TasksScreen() {
-  const { project, projectId } = useProjectContext();
+  const { project, isLoading, isError } = useProjectContext();
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#b69cff" />;
+  }
+
+  if (isError) {
+    return (
+      <View className="bg-primary relative flex-1 px-3">
+        <Text className="text-text mt-3">Nepodařilo se načíst úkoly.</Text>
+      </View>
+    );
+  }
+
+  const tasks = project?.data.tasks ?? [];
 
   return (
-    <ScrollView
-      className="flex-1 bg-primary px-3 pt-3"
-      contentContainerStyle={{ paddingBottom: 24 }}
-    >
-      <Text className="text-text text-lg font-semibold mb-3">Ukoly</Text>
-      <Text className="text-muted mb-4">
-        Projekt #{projectId ?? "-"}: {project?.data.title ?? "-"}
-      </Text>
-
-      {TASKS.map((task) => (
-        <View key={task.id} className="bg-secondary rounded-xl p-4 mb-3">
-          <Text className="text-text text-base font-semibold">
-            {task.title}
-          </Text>
-          <Text className="text-muted mt-1">Přiřazeno: {task.assignee}</Text>
-          <Text className="text-muted mt-1">Stav: {task.status}</Text>
+    <FlashList
+      data={tasks}
+      renderItem={({ item }) => <ProjectTaskLi task={item} />}
+      keyExtractor={(item) => item.id.toString()}
+      className="mt-3 px-2"
+      ListEmptyComponent={() => (
+        <View>
+          <Text className="text-muted mt-3 text-center">Žádné úkoly.</Text>
         </View>
-      ))}
-    </ScrollView>
+      )}
+    />
   );
 }
