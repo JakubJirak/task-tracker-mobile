@@ -25,7 +25,7 @@ export default function TagLi({
         style={{ backgroundColor: color }}
       />
       <Text className="text-text flex-1">{name}</Text>
-      <Ionicons name="pencil" size={16} color={COLORS.muted} />
+      <Ionicons name="pencil" size={12} color={COLORS.muted} />
     </TouchableOpacity>
   );
 }

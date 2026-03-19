@@ -27,7 +27,7 @@ export default function ProjectLi({ project }: { project: ProjectResource }) {
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.6}
-      className="bg-secondary px-4 pb-4 pt-3 rounded-xl"
+      className="bg-secondary px-4 pb-4 pt-3 rounded-xl mb-3"
     >
       <View className="flex-row items-center mb-2">
         <Text className="text-text text-lg font-medium flex-1">
@@ -45,7 +45,7 @@ export default function ProjectLi({ project }: { project: ProjectResource }) {
         <ProgressBar
           progress={project.completion_percentage / 100}
           color={COLORS.accent}
-          className="w-[90%]"
+          className="w-[87%]"
         />
         <Text className="text-text text-right text-sm">
           {project.completion_percentage}%
