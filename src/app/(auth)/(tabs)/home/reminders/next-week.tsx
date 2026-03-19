@@ -23,9 +23,16 @@ export default function RemindersNextWeek() {
       data={nextWeekReminders}
       renderItem={({ item }) => <ReminderLi reminder={item} />}
       keyExtractor={(item) => item.id.toString()}
-      className="mt-2 px-2"
+      className="mt-3 px-2"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
+      ListEmptyComponent={() => (
+        <View>
+          <Text className="text-muted mt-3 text-center">
+            Žádné události příští týden.
+          </Text>
+        </View>
+      )}
     />
   );
 }

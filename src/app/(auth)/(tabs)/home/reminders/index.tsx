@@ -57,9 +57,14 @@ export default function Home() {
         )
       }
       keyExtractor={(item) => item.id}
-      className="mt-2 px-2"
+      className="mt-3 px-2"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
+      ListEmptyComponent={() => (
+        <View>
+          <Text className="text-muted mt-3 text-center">Žádné události.</Text>
+        </View>
+      )}
     />
   );
 }

@@ -27,9 +27,16 @@ export default function Home() {
       data={dateTasks}
       renderItem={({ item }) => <TaskLi task={item} />}
       keyExtractor={(item) => item.id.toString()}
-      className="mt-2 px-2"
+      className="mt-3 px-2"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
+      ListEmptyComponent={() => (
+        <View>
+          <Text className="text-muted mt-3 text-center">
+            Žádné úkoly s datem.
+          </Text>
+        </View>
+      )}
     />
   );
 }
