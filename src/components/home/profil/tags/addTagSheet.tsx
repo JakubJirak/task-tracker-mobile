@@ -39,7 +39,10 @@ export default function AddTagSheet() {
               <Text className="text-text text-lg mb-1 font-medium">
                 Název tagu
               </Text>
-              <TextInput className="bg-secondary rounded-lg text-lg h-11 px-2" />
+              <TextInput
+                className="bg-secondary rounded-lg text-lg h-11 px-2"
+                cursorColorClassName="accent-gray-300"
+              />
             </View>
           </View>
         </View>

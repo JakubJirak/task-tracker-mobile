@@ -5,7 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { format, parseISO } from "date-fns";
 import { cs } from "date-fns/locale";
 import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 
 export default function Index() {
   const { project, isLoading, isError } = useProjectContext();
@@ -43,7 +43,7 @@ export default function Index() {
   }
 
   return (
-    <View className="px-3 relative">
+    <ScrollView showsVerticalScrollIndicator={false} className="px-3 relative">
       <View>
         <View className="flex-row">
           <View className="">
@@ -77,6 +77,6 @@ export default function Index() {
 
         <Text className="text-muted mt-3">{project?.data.description}</Text>
       </View>
-    </View>
+    </ScrollView>
   );
 }
