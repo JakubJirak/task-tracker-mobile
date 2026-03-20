@@ -1,13 +1,13 @@
 import { TagResource } from "@/client";
 import { tagsIndexOptions } from "@/client/@tanstack/react-query.gen";
 import AddTagSheet from "@/components/home/profil/tags/addTagSheet";
-import TagDetailSheet, {
-  TagDetailSheetHandle,
-} from "@/components/home/profil/tags/tagDetailSheet";
+import EditTagSheet, {
+  EditTagSheetHandle,
+} from "@/components/home/profil/tags/editTagSheet";
 import TagGroup from "@/components/home/profil/tags/tagGroup";
 import TopBar from "@/components/topBar";
 import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
 export default function Home() {
@@ -16,11 +16,7 @@ export default function Home() {
     staleTime: 60_000,
   });
 
-  const tagDetailSheet = useRef<TagDetailSheetHandle>(null);
-  const [selectedTag, setSelectedTag] = useState<Pick<
-    TagResource,
-    "id" | "name" | "color"
-  > | null>(null);
+  const editTagSheet = useRef<EditTagSheetHandle>(null);
 
   const tags = data as unknown as {
     project: TagResource[];
@@ -30,12 +26,12 @@ export default function Home() {
   };
 
   const handleTagPress = async (tag: TagResource) => {
-    setSelectedTag({
+    await editTagSheet.current?.present({
       id: tag.id,
       name: tag.name,
       color: tag.color,
+      tags_type: tag.tags_type,
     });
-    await tagDetailSheet.current?.present();
   };
 
   if (isLoading) {
@@ -76,7 +72,7 @@ export default function Home() {
       <View className="absolute left-0 right-7 bottom-22">
         <AddTagSheet />
       </View>
-      <TagDetailSheet ref={tagDetailSheet} tag={selectedTag} />
+      <EditTagSheet ref={editTagSheet} />
     </View>
   );
 }
