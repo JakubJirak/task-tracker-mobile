@@ -12,6 +12,12 @@ export default function Home() {
   const { allReminders, isLoading, isError } = useReminders();
 
   const data: ReminderSectionItem[] = [
+    { type: "title", id: "title-today", title: "Dnes" },
+    ...allReminders.today.map((event) => ({
+      type: "event" as const,
+      id: `today-${event.id}`,
+      event,
+    })),
     { type: "title", id: "title-this-week", title: "Tento týden" },
     ...allReminders.thisWeek.map((event) => ({
       type: "event" as const,

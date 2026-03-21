@@ -9,10 +9,13 @@ export function useSchool() {
 
   const groupedData = query.data && "before" in query.data ? query.data : null;
 
+  const todaySchool = groupedData?.today ?? [];
   const thisWeekSchool = groupedData?.thisWeek ?? [];
   const nextWeekSchool = groupedData?.nextWeek ?? [];
   const laterSchool = groupedData?.later ?? [];
   const beforeSchool = groupedData?.before ?? [];
+
+  const tws = [...todaySchool, ...thisWeekSchool];
 
   return {
     ...query,
@@ -21,7 +24,7 @@ export function useSchool() {
       nextWeek: nextWeekSchool,
       later: laterSchool,
     },
-    thisWeekSchool,
+    thisWeekSchool: tws,
     nextWeekSchool,
     laterSchool,
     beforeSchool,

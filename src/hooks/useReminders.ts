@@ -9,19 +9,23 @@ export function useReminders() {
 
   const groupedData = query.data && "before" in query.data ? query.data : null;
 
+  const todayReminders = groupedData?.today ?? [];
   const thisWeekReminders = groupedData?.thisWeek ?? [];
   const nextWeekReminders = groupedData?.nextWeek ?? [];
   const laterReminders = groupedData?.later ?? [];
   const beforeReminders = groupedData?.before ?? [];
 
+  const twr = [...todayReminders, ...thisWeekReminders];
+
   return {
     ...query,
     allReminders: {
+      today: todayReminders,
       thisWeek: thisWeekReminders,
       nextWeek: nextWeekReminders,
       later: laterReminders,
     },
-    thisWeekReminders,
+    thisWeekReminders: twr,
     nextWeekReminders,
     laterReminders,
     beforeReminders,

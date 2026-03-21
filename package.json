@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@lodev09/react-native-true-sheet": "^3.9.9",
+    "@react-native-community/datetimepicker": "8.6.0",
     "@react-native-vector-icons/material-design-icons": "^12.4.2",
     "@react-navigation/bottom-tabs": "^7.7.3",
     "@react-navigation/elements": "^2.8.1",
