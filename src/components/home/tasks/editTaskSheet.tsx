@@ -165,7 +165,11 @@ export default function EditTaskSheet() {
     >
       <View className="px-3 pt-6">
         <View className="flex-row self-center mt-3 items-center gap-2">
-          <MaterialDesignIcons name="pencil" size={24} color={COLORS.text} />
+          <MaterialDesignIcons
+            name="clipboard-edit-outline"
+            size={24}
+            color={COLORS.text}
+          />
           <Text className="text-text text-xl font-bold">Upravit úkol</Text>
         </View>
 
