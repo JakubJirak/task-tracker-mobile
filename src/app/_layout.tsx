@@ -7,6 +7,7 @@ import axiosClient from "@/utils/axios";
 import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
+import { HeroUINativeConfig } from "heroui-native";
 import { HeroUINativeProvider } from "heroui-native/provider";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -15,6 +16,13 @@ import "../../global.css";
 
 export default function RootLayout() {
   const [user, setUser] = useState<AuthUser | null>(null);
+
+  const config: HeroUINativeConfig = {
+    devInfo: {
+      // Disable styling principles information message
+      stylingPrinciples: false,
+    },
+  };
 
   useEffect(() => {
     async function checkAuth() {
@@ -44,7 +52,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <HeroUINativeProvider>
+      <HeroUINativeProvider config={config}>
         <ThemeProvider value={MyTheme}>
           <QueryClientProvider client={queryClient}>
             <AuthContext.Provider value={{ user, setUser }}>
