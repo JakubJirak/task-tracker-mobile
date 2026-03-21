@@ -2,22 +2,20 @@ import {
   tagsIndexQueryKey,
   tagsStoreMutation,
 } from "@/client/@tanstack/react-query.gen";
+import { useAppForm } from "@/components/forms/formContext";
 import { COLORS } from "@/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import MaterialDesignIcons from "@react-native-vector-icons/material-design-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useRef, useState } from "react";
-import {
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { z } from "zod";
 import ColorPicker from "./colorPicker";
 
 type TagCategory = "project" | "task" | "reminder" | "school";
+const isIPad = Platform.OS === "ios" && Platform.isPad;
 
 const TAG_CATEGORY_OPTIONS: Array<{
   label: string;
@@ -30,13 +28,25 @@ const TAG_CATEGORY_OPTIONS: Array<{
   { label: "Škola", value: "school", icon: "school-outline" },
 ];
 
+const addTagSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Název tagu je povinný")
+    .max(20, "Název tagu musí mít maximálně 20 znaků"),
+  color: z.string().min(1, "Barva tagu je povinná"),
+  tags_type: z.enum(["project", "task", "reminder", "school"]),
+});
+
 export default function AddTagSheet() {
   const sheet = useRef<TrueSheet>(null);
-  const [tagName, setTagName] = useState("");
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>(COLORS.muted);
-  const [selectedCategory, setSelectedCategory] =
-    useState<TagCategory>("project");
+  const [colorPickerValue, setColorPickerValue] = useState<string>(
+    COLORS.muted,
+  );
+
+  const insets = useSafeAreaInsets();
+  const bottomInset = isIPad ? 0 : insets.bottom;
 
   const present = async () => {
     await sheet.current?.present();
@@ -47,22 +57,33 @@ export default function AddTagSheet() {
   const addTagMut = useMutation({
     ...tagsStoreMutation(),
     onSuccess: () => {
+      form.reset();
+      setColorPickerValue(COLORS.muted);
+      setShowColorPicker(false);
       sheet.current?.dismiss();
       queryClient.invalidateQueries({ queryKey: tagsIndexQueryKey() });
     },
   });
 
-  const addTag = () => {
-    if (!tagName.trim()) return;
-
-    addTagMut.mutate({
-      body: {
-        name: tagName.trim(),
-        color: selectedColor,
-        tags_type: selectedCategory,
-      },
-    });
-  };
+  const form = useAppForm({
+    defaultValues: {
+      name: "",
+      color: COLORS.muted as string,
+      tags_type: "project" as TagCategory,
+    },
+    validators: {
+      onChange: addTagSchema,
+    },
+    onSubmit: ({ value }) => {
+      addTagMut.mutate({
+        body: {
+          name: value.name.trim(),
+          color: value.color,
+          tags_type: value.tags_type,
+        },
+      });
+    },
+  });
 
   return (
     <View className="relative flex-1">
@@ -82,16 +103,33 @@ export default function AddTagSheet() {
         dimmedDetentIndex={0.1}
         backgroundColor={COLORS.sheet}
         footer={() => (
-          <TouchableOpacity
-            onPress={addTag}
-            disabled={!tagName.trim()}
-            className={`py-3 mx-4 rounded-xl mb-6 bg-accent ${!tagName.trim() && "bg-accent/50"}`}
-            activeOpacity={0.7}
-          >
-            <Text className="text-white text-lg text-center font-semibold">
-              Vytvořit
-            </Text>
-          </TouchableOpacity>
+          <View style={{ paddingBottom: bottomInset }}>
+            <form.AppForm>
+              <form.Subscribe
+                selector={(state) => ({
+                  name: state.values.name,
+                  color: state.values.color,
+                  isSubmitting: state.isSubmitting,
+                })}
+              >
+                {({ name, color, isSubmitting }) => {
+                  const isDisabled =
+                    !name.trim() ||
+                    !color.trim() ||
+                    addTagMut.isPending ||
+                    isSubmitting;
+
+                  return (
+                    <form.SubmitButton
+                      label="Vytvořit"
+                      pendingLabel="Vytvářím..."
+                      disabled={isDisabled}
+                    />
+                  );
+                }}
+              </form.Subscribe>
+            </form.AppForm>
+          </View>
         )}
       >
         <View className="px-3 pt-6">
@@ -101,75 +139,57 @@ export default function AddTagSheet() {
           </View>
 
           <View className="mt-5 gap-5">
-            <View>
-              <Text className="text-text text-lg mb-1.5 font-medium">
-                Název tagu
-              </Text>
-              <TextInput
-                className="bg-secondary rounded-lg text-base h-11 px-3 text-text"
-                cursorColor={COLORS.text}
-                placeholder="Např. Práce"
-                placeholderTextColor={COLORS.muted}
-                onChange={(e) => setTagName(e.nativeEvent.text)}
+            <form.AppForm>
+              <form.AppField
+                name="name"
+                children={(field) => (
+                  <field.TextInputField
+                    label="Název tagu"
+                    placeholder="Např. Práce"
+                    autoCorrect={false}
+                  />
+                )}
               />
-            </View>
 
-            <View>
-              <Text className="text-text text-lg mb-1.5 font-medium">
-                Barva
-              </Text>
-              <Pressable
-                onPress={() => setShowColorPicker(true)}
-                className="bg-secondary rounded-lg h-11 px-3 flex-row items-center justify-between"
-              >
-                <Text className="text-muted text-base">Vybrat barvu</Text>
-                <View
-                  className="w-5 h-5 rounded-full"
-                  style={{ backgroundColor: selectedColor }}
-                />
-              </Pressable>
-            </View>
+              <form.AppField
+                name="color"
+                children={(field) => (
+                  <field.ColorPickerField
+                    label="Barva"
+                    buttonLabel="Vybrat barvu"
+                    onPress={() => {
+                      setColorPickerValue(field.state.value || COLORS.muted);
+                      setShowColorPicker(true);
+                    }}
+                  />
+                )}
+              />
 
-            <View>
-              <Text className="text-text text-lg mb-1.5 font-medium">Typ</Text>
-              <View className="flex-row flex-wrap justify-between gap-y-2">
-                {TAG_CATEGORY_OPTIONS.map((option) => {
-                  const isActive = selectedCategory === option.value;
-
-                  return (
-                    <Pressable
-                      key={option.value}
-                      onPress={() => setSelectedCategory(option.value)}
-                      className={`h-12 w-[48%] rounded-lg px-3 flex-row items-center justify-center gap-2  border-secondary bg-secondary ${
-                        isActive ? "border border-accent" : "border-none"
-                      }`}
-                    >
-                      <Ionicons
-                        name={option.icon}
-                        size={18}
-                        color={isActive ? "white" : COLORS.muted}
-                      />
-                      <Text
-                        className={`text-base ${
-                          isActive ? "text-white font-semibold" : "text-muted"
-                        }`}
-                      >
-                        {option.label}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            </View>
+              <form.AppField
+                name="tags_type"
+                children={(field) => (
+                  <field.CategorySelectorField
+                    label="Typ"
+                    options={TAG_CATEGORY_OPTIONS}
+                  />
+                )}
+              />
+            </form.AppForm>
           </View>
         </View>
       </TrueSheet>
 
       <ColorPicker
         visible={showColorPicker}
-        value={selectedColor}
-        onChange={setSelectedColor}
-        onConfirm={setSelectedColor}
+        value={colorPickerValue}
+        onChange={(value) => {
+          setColorPickerValue(value);
+          form.setFieldValue("color", value);
+        }}
+        onConfirm={(value) => {
+          setColorPickerValue(value);
+          form.setFieldValue("color", value);
+        }}
         onClose={() => setShowColorPicker(false)}
         centered
         animationType="fade"

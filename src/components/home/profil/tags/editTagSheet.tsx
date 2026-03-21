@@ -3,6 +3,7 @@ import {
   tagsUpdateMutation,
 } from "@/client/@tanstack/react-query.gen";
 import { TagResource } from "@/client/types.gen";
+import { useAppForm } from "@/components/forms/formContext";
 import { COLORS } from "@/constants/COLORS";
 import { Ionicons } from "@expo/vector-icons";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
@@ -13,13 +14,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  Pressable,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Text, View } from "react-native";
+import { z } from "zod";
 import ColorPicker from "./colorPicker";
 
 type TagCategory = "project" | "task" | "reminder" | "school";
@@ -33,6 +29,15 @@ const toTagCategory = (value?: string): TagCategory => {
   return "project";
 };
 
+const editTagSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "Název tagu je povinný")
+    .max(20, "Název tagu musí mít maximálně 20 znaků"),
+  color: z.string().min(1, "Barva tagu je povinná"),
+});
+
 export type EditTagSheetHandle = {
   present: (tag: TagPreview) => Promise<void>;
   dismiss: () => Promise<void>;
@@ -43,37 +48,49 @@ const EditTagSheet = forwardRef<EditTagSheetHandle, {}>((_, ref) => {
   const activeTagRef = useRef<TagPreview | null>(null);
   const queryClient = useQueryClient();
 
-  const [tagName, setTagName] = useState("");
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<string>(COLORS.muted);
+  const [colorPickerValue, setColorPickerValue] = useState<string>(
+    COLORS.muted,
+  );
 
-  const hydrateFromTag = (tag: TagPreview) => {
-    activeTagRef.current = tag;
-    setTagName(tag.name);
-    setSelectedColor(tag.color);
-  };
+  const form = useAppForm({
+    defaultValues: {
+      name: "",
+      color: COLORS.muted as string,
+    },
+    validators: {
+      onChange: editTagSchema,
+    },
+    onSubmit: ({ value }) => {
+      if (!activeTagRef.current) return;
+
+      editTagMut.mutate({
+        path: { tag: activeTagRef.current.id },
+        body: {
+          name: value.name.trim(),
+          color: value.color,
+          tags_type: toTagCategory(activeTagRef.current.tags_type),
+        },
+      });
+    },
+  });
 
   const editTagMut = useMutation({
     ...tagsUpdateMutation(),
     onSuccess: () => {
+      form.reset();
       sheet.current?.dismiss();
       queryClient.invalidateQueries({ queryKey: tagsIndexQueryKey() });
     },
   });
 
-  const trimmedName = tagName.trim();
-  const currentTag = activeTagRef.current;
-  const nameUnchanged = currentTag
-    ? trimmedName === currentTag.name.trim()
-    : true;
-  const colorUnchanged = currentTag
-    ? selectedColor.toLowerCase() === currentTag.color.toLowerCase()
-    : true;
-  const isSaveDisabled =
-    !trimmedName ||
-    !selectedColor?.trim() ||
-    (nameUnchanged && colorUnchanged) ||
-    editTagMut.isPending;
+  const hydrateFromTag = (tag: TagPreview) => {
+    activeTagRef.current = tag;
+    form.reset();
+    form.setFieldValue("name", tag.name);
+    form.setFieldValue("color", tag.color);
+    setColorPickerValue(tag.color);
+  };
 
   useImperativeHandle(ref, () => ({
     present: async (tag) => {
@@ -82,43 +99,49 @@ const EditTagSheet = forwardRef<EditTagSheetHandle, {}>((_, ref) => {
     },
     dismiss: async () => {
       setShowColorPicker(false);
+      form.reset();
       await sheet.current?.dismiss();
     },
   }));
-
-  const updateTag = () => {
-    if (!activeTagRef.current || !trimmedName || !selectedColor?.trim()) return;
-
-    editTagMut.mutate({
-      path: { tag: activeTagRef.current.id },
-      body: {
-        name: trimmedName,
-        color: selectedColor,
-        tags_type: toTagCategory(activeTagRef.current.tags_type),
-      },
-    });
-  };
 
   return (
     <>
       <TrueSheet
         name="editTag"
         ref={sheet}
-        detents={[0.9, 1]}
+        detents={[0.7]}
         cornerRadius={24}
         dimmedDetentIndex={0.1}
         backgroundColor={COLORS.sheet}
         footer={() => (
-          <TouchableOpacity
-            onPress={updateTag}
-            disabled={isSaveDisabled}
-            className={`py-3 mx-4 rounded-xl mb-6 bg-accent ${isSaveDisabled && "bg-accent/50"}`}
-            activeOpacity={0.7}
-          >
-            <Text className="text-white text-lg text-center font-semibold">
-              Uložit
-            </Text>
-          </TouchableOpacity>
+          <form.AppForm>
+            <form.Subscribe selector={(state) => state.values}>
+              {(values) => {
+                const trimmedName = values.name.trim();
+                const currentTag = activeTagRef.current;
+                const nameUnchanged = currentTag
+                  ? trimmedName === currentTag.name.trim()
+                  : true;
+                const colorUnchanged = currentTag
+                  ? values.color.toLowerCase() ===
+                    currentTag.color.toLowerCase()
+                  : true;
+                const isSaveDisabled =
+                  !trimmedName ||
+                  !values.color.trim() ||
+                  (nameUnchanged && colorUnchanged) ||
+                  editTagMut.isPending;
+
+                return (
+                  <form.SubmitButton
+                    label="Uložit"
+                    pendingLabel="Ukládám..."
+                    disabled={isSaveDisabled}
+                  />
+                );
+              }}
+            </form.Subscribe>
+          </form.AppForm>
         )}
       >
         <View className="px-3 pt-6">
@@ -128,44 +151,47 @@ const EditTagSheet = forwardRef<EditTagSheetHandle, {}>((_, ref) => {
           </View>
 
           <View className="mt-5 gap-5">
-            <View>
-              <Text className="text-text text-lg mb-1.5 font-medium">
-                Název tagu
-              </Text>
-              <TextInput
-                value={tagName}
-                className="bg-secondary rounded-lg text-base h-11 px-3 text-text"
-                cursorColor={COLORS.text}
-                placeholder="Např. Práce"
-                placeholderTextColor={COLORS.muted}
-                onChange={(e) => setTagName(e.nativeEvent.text)}
+            <form.AppForm>
+              <form.AppField
+                name="name"
+                children={(field) => (
+                  <field.TextInputField
+                    label="Název tagu"
+                    placeholder="Např. Práce"
+                    autoCorrect={false}
+                  />
+                )}
               />
-            </View>
 
-            <View>
-              <Text className="text-text text-lg mb-1.5 font-medium">
-                Barva
-              </Text>
-              <Pressable
-                onPress={() => setShowColorPicker(true)}
-                className="bg-secondary rounded-lg h-11 px-3 flex-row items-center justify-between"
-              >
-                <Text className="text-muted text-base">Vybrat barvu</Text>
-                <View
-                  className="w-5 h-5 rounded-full"
-                  style={{ backgroundColor: selectedColor }}
-                />
-              </Pressable>
-            </View>
+              <form.AppField
+                name="color"
+                children={(field) => (
+                  <field.ColorPickerField
+                    label="Barva"
+                    buttonLabel="Vybrat barvu"
+                    onPress={() => {
+                      setColorPickerValue(field.state.value || COLORS.muted);
+                      setShowColorPicker(true);
+                    }}
+                  />
+                )}
+              />
+            </form.AppForm>
           </View>
         </View>
       </TrueSheet>
 
       <ColorPicker
         visible={showColorPicker}
-        value={selectedColor}
-        onChange={setSelectedColor}
-        onConfirm={setSelectedColor}
+        value={colorPickerValue}
+        onChange={(value) => {
+          setColorPickerValue(value);
+          form.setFieldValue("color", value);
+        }}
+        onConfirm={(value) => {
+          setColorPickerValue(value);
+          form.setFieldValue("color", value);
+        }}
         onClose={() => setShowColorPicker(false)}
         centered
         animationType="fade"
