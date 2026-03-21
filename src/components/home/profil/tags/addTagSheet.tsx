@@ -72,7 +72,7 @@ export default function AddTagSheet() {
       tags_type: "project" as TagCategory,
     },
     validators: {
-      onChange: addTagSchema,
+      onSubmit: addTagSchema,
     },
     onSubmit: ({ value }) => {
       addTagMut.mutate({

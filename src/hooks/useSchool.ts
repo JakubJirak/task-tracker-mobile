@@ -20,6 +20,7 @@ export function useSchool() {
   return {
     ...query,
     allSchool: {
+      today: todaySchool,
       thisWeek: thisWeekSchool,
       nextWeek: nextWeekSchool,
       later: laterSchool,

@@ -59,7 +59,7 @@ const EditTagSheet = forwardRef<EditTagSheetHandle, {}>((_, ref) => {
       color: COLORS.muted as string,
     },
     validators: {
-      onChange: editTagSchema,
+      onSubmit: editTagSchema,
     },
     onSubmit: ({ value }) => {
       if (!activeTagRef.current) return;
