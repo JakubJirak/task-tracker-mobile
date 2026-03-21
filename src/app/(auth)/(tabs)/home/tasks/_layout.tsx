@@ -1,6 +1,7 @@
 import AddTaskSheet from "@/components/home/tasks/addTaskSheet";
 import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
+import EditTaskSheet from "@/components/home/tasks/editTaskSheet";
 import {
   createMaterialTopTabNavigator,
   MaterialTopTabNavigationEventMap,
@@ -63,6 +64,7 @@ export default function RootLayout() {
         className="absolute left-0 right-7 bottom-22"
       >
         <AddTaskSheet />
+        <EditTaskSheet />
       </View>
     </View>
   );

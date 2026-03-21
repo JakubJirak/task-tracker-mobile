@@ -1,4 +1,5 @@
 import AddReminderSheet from "@/components/home/reminders/addReminderSheet";
+import EditReminderSheet from "@/components/home/reminders/editReminderSheet";
 import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
 import {
@@ -67,6 +68,7 @@ export default function RootLayout() {
         className="absolute left-0 right-7 bottom-22"
       >
         <AddReminderSheet />
+        <EditReminderSheet />
       </View>
     </View>
   );
