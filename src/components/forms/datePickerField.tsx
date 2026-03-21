@@ -46,7 +46,7 @@ export function AppDatePickerField({
         <Text className="text-text text-lg mb-1.5 font-medium">{label}</Text>
         <Pressable
           onPress={presentPicker}
-          className="bg-secondary rounded-lg h-11 px-3 flex-row items-center justify-between"
+          className="bg-secondary rounded-lg h-14 px-3 flex-row items-center justify-between"
         >
           <Text className="text-text text-base">{selectedDateLabel}</Text>
         </Pressable>

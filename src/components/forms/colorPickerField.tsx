@@ -23,7 +23,7 @@ export function AppColorPickerField({
       <Text className="text-text text-lg mb-1.5 font-medium">{label}</Text>
       <Pressable
         onPress={onPress}
-        className="bg-secondary rounded-lg h-11 px-3 flex-row items-center justify-between"
+        className="bg-secondary rounded-lg h-14 px-3.5 flex-row items-center justify-between"
       >
         <Text className="text-muted text-base">{buttonLabel}</Text>
         <View

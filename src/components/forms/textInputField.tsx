@@ -1,5 +1,5 @@
-import { COLORS } from "@/constants/COLORS";
-import { Text, TextInput, TextInputProps, View } from "react-native";
+import { FieldError, Input, Label, TextField } from "heroui-native";
+import { TextInputProps } from "react-native";
 import { getFirstFieldErrorMessage } from "./errorMessage";
 import { useFieldContext } from "./formCore";
 
@@ -13,22 +13,22 @@ export function AppTextInputField({ label, ...props }: AppTextInputFieldProps) {
     field.state.meta.isTouched && field.state.meta.errors.length > 0;
 
   return (
-    <View>
-      <Text className="text-text text-lg mb-1.5 font-medium">{label}</Text>
-      <TextInput
+    <TextField isInvalid={hasError}>
+      <Label className="text-text font-medium">{label}</Label>
+      <Input
         value={field.state.value}
-        className="bg-secondary rounded-lg text-base h-11 px-3 text-text"
-        cursorColor={COLORS.text}
-        placeholderTextColor={COLORS.muted}
+        className="bg-secondary border-secondary rounded-lg text-base text-text"
+        placeholderColorClassName="text-muted"
+        selectionColorClassName="accent-accent"
         onChangeText={field.handleChange}
         onBlur={field.handleBlur}
         {...props}
       />
       {hasError ? (
-        <Text className="text-red-400 text-xs mt-1">
+        <FieldError className="text-red-400 text-xs mt-1">
           {getFirstFieldErrorMessage(field.state.meta.errors)}
-        </Text>
+        </FieldError>
       ) : null}
-    </View>
+    </TextField>
   );
 }

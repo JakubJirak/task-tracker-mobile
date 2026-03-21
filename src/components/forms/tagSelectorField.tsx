@@ -77,7 +77,7 @@ export function AppTagSelectorField({
         <Text className="text-text text-lg mb-1.5 font-medium">{label}</Text>
         <Pressable
           onPress={presentTags}
-          className="bg-secondary rounded-lg h-11 px-3 flex-row items-center justify-between"
+          className="bg-secondary rounded-lg h-14 px-3.5 flex-row items-center justify-between"
         >
           {selectedTag ? (
             <View className="flex-row items-center gap-2">
@@ -131,7 +131,7 @@ export function AppTagSelectorField({
                 <Pressable
                   key={tag.id}
                   onPress={() => selectTag(tag.id)}
-                  className={`rounded-lg px-3 h-11 flex-row items-center justify-between bg-secondary ${
+                  className={`rounded-lg px-3 h-14 flex-row items-center justify-between bg-secondary ${
                     isSelected ? "border border-accent" : "border-none"
                   }`}
                 >

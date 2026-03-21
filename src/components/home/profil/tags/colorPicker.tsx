@@ -52,11 +52,11 @@ export default function ColorPicker({
       onRequestClose={onClose}
     >
       <View className="flex-1">
-        <Pressable className="absolute inset-0 bg-black/70" onPress={onClose} />
+        <Pressable className="absolute inset-0 bg-black/60" onPress={onClose} />
 
         <View className={`flex-1 ${overlayAlignment} px-4`}>
           <View
-            className={`${containerShape} ${containerWidth} bg-primary px-5 pb-6 pt-5`}
+            className={`${containerShape} ${containerWidth} bg-sheet px-5 pb-6 pt-5`}
           >
             <View className="mb-4 flex-row items-center justify-between">
               <Text className="text-text text-lg font-semibold">
