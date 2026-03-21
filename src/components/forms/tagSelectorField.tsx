@@ -3,6 +3,7 @@ import { TagResource } from "@/client/types.gen";
 import { COLORS } from "@/constants/COLORS";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import { useQuery } from "@tanstack/react-query";
+import { Label } from "heroui-native";
 import { useMemo, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { getFirstFieldErrorMessage } from "./errorMessage";
@@ -74,7 +75,7 @@ export function AppTagSelectorField({
   return (
     <>
       <View>
-        <Text className="text-text text-lg mb-1.5 font-medium">{label}</Text>
+        <Label className="mb-1.5 ml-1">{label}</Label>
         <Pressable
           onPress={presentTags}
           className="bg-secondary rounded-lg h-14 px-3.5 flex-row items-center justify-between"

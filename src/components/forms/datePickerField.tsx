@@ -1,6 +1,7 @@
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
 import { cs } from "date-fns/locale/cs";
+import { Label } from "heroui-native";
 import { useState } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import { getFirstFieldErrorMessage } from "./errorMessage";
@@ -43,7 +44,7 @@ export function AppDatePickerField({
   return (
     <>
       <View>
-        <Text className="text-text text-lg mb-1.5 font-medium">{label}</Text>
+        <Label className="mb-1.5 ml-1">{label}</Label>
         <Pressable
           onPress={presentPicker}
           className="bg-secondary rounded-lg h-14 px-3 flex-row items-center justify-between"

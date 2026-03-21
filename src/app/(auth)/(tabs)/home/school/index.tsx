@@ -8,34 +8,44 @@ type SchoolSectionItem =
   | { type: "title"; id: string; title: string }
   | { type: "event"; id: string; event: EventResource };
 
+const buildSection = (
+  events: EventResource[],
+  titleId: string,
+  title: string,
+  keyPrefix: string,
+): SchoolSectionItem[] => {
+  if (events.length === 0) {
+    return [];
+  }
+
+  return [
+    { type: "title", id: titleId, title },
+    ...events.map((event) => ({
+      type: "event" as const,
+      id: `${keyPrefix}-${event.id}`,
+      event,
+    })),
+  ];
+};
+
 export default function Home() {
   const { allSchool, isLoading, isError } = useSchool();
 
   const data: SchoolSectionItem[] = [
-    { type: "title", id: "title-today", title: "Dnes" },
-    ...allSchool.today.map((event) => ({
-      type: "event" as const,
-      id: `today-${event.id}`,
-      event,
-    })),
-    { type: "title", id: "title-this-week", title: "Tento týden" },
-    ...allSchool.thisWeek.map((event) => ({
-      type: "event" as const,
-      id: `this-week-${event.id}`,
-      event,
-    })),
-    { type: "title", id: "title-next-week", title: "Příští týden" },
-    ...allSchool.nextWeek.map((event) => ({
-      type: "event" as const,
-      id: `next-week-${event.id}`,
-      event,
-    })),
-    { type: "title", id: "title-later", title: "Později" },
-    ...allSchool.later.map((event) => ({
-      type: "event" as const,
-      id: `later-${event.id}`,
-      event,
-    })),
+    ...buildSection(allSchool.today, "title-today", "Dnes", "today"),
+    ...buildSection(
+      allSchool.thisWeek,
+      "title-this-week",
+      "Tento týden",
+      "this-week",
+    ),
+    ...buildSection(
+      allSchool.nextWeek,
+      "title-next-week",
+      "Příští týden",
+      "next-week",
+    ),
+    ...buildSection(allSchool.later, "title-later", "Později", "later"),
   ];
 
   if (isLoading) {

@@ -72,7 +72,7 @@ export default function AddTaskSheet() {
     <View className="relative flex-1">
       <TouchableOpacity
         onPress={present}
-        className="bg-accent p-4 rounded-2xl absolute right-0"
+        className="bg-accent p-4 rounded-2xl absolute right-0 shadow-lg shadow-primary"
         activeOpacity={0.6}
       >
         <MaterialDesignIcons name="plus" size={24} color="white" />
@@ -98,7 +98,7 @@ export default function AddTaskSheet() {
 
                 return (
                   <form.SubmitButton
-                    label="Vytvořit úkol"
+                    label="Přidat úkol"
                     pendingLabel="Vytvářím..."
                     disabled={isDisabled}
                   />
@@ -111,7 +111,7 @@ export default function AddTaskSheet() {
         <View className="px-3 pt-6">
           <View className="flex-row self-center mt-3 items-center gap-2">
             <MaterialDesignIcons
-              name="clipboard-plus"
+              name="clipboard-plus-outline"
               size={28}
               color={COLORS.text}
             />
@@ -149,7 +149,7 @@ export default function AddTaskSheet() {
                 name="due_date"
                 children={(field) => (
                   <field.DatePickerField
-                    label="Termín"
+                    label="Termín (nepovinné)"
                     placeholder="Bez termínu"
                   />
                 )}
@@ -159,7 +159,7 @@ export default function AddTaskSheet() {
                 name="tag"
                 children={(field) => (
                   <field.TagSelectorField
-                    label="Tag"
+                    label="Tag (nepovinné)"
                     tagsType="task"
                     placeholder="Bez tagu"
                   />

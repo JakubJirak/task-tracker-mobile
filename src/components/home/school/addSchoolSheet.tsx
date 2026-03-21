@@ -73,7 +73,7 @@ export default function AddSchoolSheet() {
     <View className="relative flex-1">
       <TouchableOpacity
         onPress={present}
-        className="bg-accent p-4 rounded-2xl absolute right-0"
+        className="bg-accent p-4 rounded-2xl absolute right-0 shadow-lg shadow-primary"
         activeOpacity={0.6}
       >
         <MaterialDesignIcons name="plus" size={24} color="white" />
@@ -103,7 +103,7 @@ export default function AddSchoolSheet() {
 
                 return (
                   <form.SubmitButton
-                    label="Vytvořit školní událost"
+                    label="Přidat školní událost"
                     pendingLabel="Vytvářím..."
                     disabled={isDisabled}
                   />
@@ -128,7 +128,7 @@ export default function AddSchoolSheet() {
                 children={(field) => (
                   <field.TextInputField
                     label="Název"
-                    placeholder="Např. Test z matematiky"
+                    placeholder="Název události"
                     autoCorrect={false}
                   />
                 )}
@@ -139,7 +139,7 @@ export default function AddSchoolSheet() {
                 children={(field) => (
                   <field.TextInputField
                     label="Popis"
-                    placeholder="Např. Opakování kapitol 1-4"
+                    placeholder="Popis události"
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
@@ -162,7 +162,7 @@ export default function AddSchoolSheet() {
                 name="tag"
                 children={(field) => (
                   <field.TagSelectorField
-                    label="Tag"
+                    label="Tag (nepovinné)"
                     tagsType="school"
                     placeholder="Vybrat tag"
                   />

@@ -73,7 +73,7 @@ export default function AddReminderSheet() {
     <View className="relative flex-1">
       <TouchableOpacity
         onPress={present}
-        className="bg-accent p-4 rounded-2xl absolute right-0"
+        className="bg-accent p-4 rounded-2xl absolute right-0 shadow-lg shadow-primary"
         activeOpacity={0.6}
       >
         <MaterialDesignIcons name="plus" size={24} color="white" />
@@ -103,7 +103,7 @@ export default function AddReminderSheet() {
 
                 return (
                   <form.SubmitButton
-                    label="Vytvořit připomínku"
+                    label="Přidat událost"
                     pendingLabel="Vytvářím..."
                     disabled={isDisabled}
                   />
@@ -116,13 +116,11 @@ export default function AddReminderSheet() {
         <View className="px-3 pt-6">
           <View className="flex-row self-center mt-3 items-center gap-2">
             <MaterialDesignIcons
-              name="bell-plus"
+              name="bell-plus-outline"
               size={28}
               color={COLORS.text}
             />
-            <Text className="text-text text-xl font-bold">
-              Přidat připomínku
-            </Text>
+            <Text className="text-text text-xl font-bold">Přidat událost</Text>
           </View>
 
           <View className="mt-5 gap-5">
@@ -132,7 +130,7 @@ export default function AddReminderSheet() {
                 children={(field) => (
                   <field.TextInputField
                     label="Název"
-                    placeholder="Např. Zavolat na úřad"
+                    placeholder="Název události"
                     autoCorrect={false}
                   />
                 )}
@@ -143,7 +141,7 @@ export default function AddReminderSheet() {
                 children={(field) => (
                   <field.TextInputField
                     label="Popis"
-                    placeholder="Např. Zavolat kvůli potvrzení termínu"
+                    placeholder="Popis události"
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
@@ -166,7 +164,7 @@ export default function AddReminderSheet() {
                 name="tag"
                 children={(field) => (
                   <field.TagSelectorField
-                    label="Tag"
+                    label="Tag (nepovinné)"
                     tagsType="reminder"
                     placeholder="Vybrat tag"
                   />

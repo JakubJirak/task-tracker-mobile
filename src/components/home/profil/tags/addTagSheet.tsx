@@ -89,7 +89,7 @@ export default function AddTagSheet() {
     <View className="relative flex-1">
       <TouchableOpacity
         onPress={present}
-        className="bg-accent p-4 rounded-2xl absolute right-0"
+        className="bg-accent p-4 rounded-2xl absolute right-0 shadow-lg shadow-primary"
         activeOpacity={0.6}
       >
         <MaterialDesignIcons name="plus" size={24} color="white" />
