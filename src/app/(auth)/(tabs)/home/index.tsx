@@ -4,7 +4,7 @@ import AddTaskSheet from "@/components/home/FAB/addTaskSheet";
 import HomeFAB from "@/components/home/home-FAB";
 import { COLORS } from "@/constants/COLORS";
 import AuthContext from "@/contexts/AuthContext";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useContext } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -34,15 +34,29 @@ export default function Home() {
         </View>
       </View>
 
-      <View className="gap-3">
+      <View className="gap-3 mt-3">
         <Link href={"/(auth)/(tabs)/home/tasks"}>
-          <Text className="text-text">Úkoly</Text>
+          <View className="bg-secondary w-full rounded-xl flex-row items-center gap-3 p-3">
+            <MaterialIcons name="task-alt" size={24} color={COLORS.accent} />
+            <Text className="text-text text-base">Úkoly</Text>
+          </View>
         </Link>
+
         <Link href={"/(auth)/(tabs)/home/reminders"}>
-          <Text className="text-text">Události</Text>
+          <View className="bg-secondary w-full rounded-xl flex-row items-center gap-3 p-3">
+            <MaterialIcons
+              name="notifications"
+              size={24}
+              color={COLORS.accent}
+            />
+            <Text className="text-text text-base">Události</Text>
+          </View>
         </Link>
         <Link href={"/(auth)/(tabs)/home/school"}>
-          <Text className="text-text">Škola</Text>
+          <View className="bg-secondary w-full rounded-xl flex-row items-center gap-3 p-3">
+            <MaterialIcons name="school" size={24} color={COLORS.accent} />
+            <Text className="text-text text-base">Škola</Text>
+          </View>
         </Link>
       </View>
 

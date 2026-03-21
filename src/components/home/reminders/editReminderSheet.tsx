@@ -190,7 +190,7 @@ export default function EditReminderSheet() {
                   multiline
                   numberOfLines={4}
                   textAlignVertical="top"
-                  className="bg-secondary rounded-lg text-base min-h-24 px-3 py-3 text-text"
+                  className="bg-secondary border-secondary rounded-lg text-base min-h-20 px-3 py-3 text-text"
                 />
               )}
             />
