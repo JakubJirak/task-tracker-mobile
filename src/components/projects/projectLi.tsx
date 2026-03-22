@@ -27,9 +27,9 @@ export default function ProjectLi({ project }: { project: ProjectResource }) {
     <TouchableOpacity
       onPress={handlePress}
       activeOpacity={0.6}
-      className="bg-secondary px-4 pb-4 pt-3 rounded-xl mb-3"
+      className="bg-secondary p-4 rounded-xl mb-3"
     >
-      <View className="flex-row items-center mb-2">
+      <View className="flex-row items-center mb-0.5">
         <Text className="text-text text-lg font-medium flex-1">
           {project.title}
         </Text>

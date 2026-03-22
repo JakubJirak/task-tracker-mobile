@@ -11,7 +11,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns/format";
 import { cs } from "date-fns/locale/cs";
 import { parseISO } from "date-fns/parseISO";
-import { Button, Dialog, Menu } from "heroui-native";
+import { Button, Checkbox, Dialog, Menu } from "heroui-native";
 import React, { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useCSSVariable } from "uniwind";
@@ -72,10 +72,18 @@ export default function TaskLi({ task }: { task: TaskResource }) {
           delayLongPress={250}
           style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
         >
-          <Menu.Trigger ref={menuTriggerRef} isDisabled>
-            <View className="bg-secondary p-3 rounded-xl mb-3">
+          <Menu.Trigger
+            ref={menuTriggerRef}
+            isDisabled
+            className={`mb-3 ${task.is_completed ? "opacity-50" : "opacity-100"}`}
+          >
+            <View className="bg-secondary p-3 rounded-xl">
               <View className="flex-row items-center">
-                <Text className="flex-1 text-text text-base font-medium">
+                <Checkbox
+                  className="border border-accent size-5 rounded-md"
+                  isSelected={task.is_completed}
+                />
+                <Text className="flex-1 ml-2 text-text text-base/tight font-medium">
                   {task.title}
                 </Text>
                 <View>{task.tag && <Tag tag={task.tag} />}</View>

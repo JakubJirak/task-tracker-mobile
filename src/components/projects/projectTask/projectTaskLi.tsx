@@ -7,7 +7,7 @@ import {
 import { openEditProjectTaskSheet } from "@/components/projects/projectTask/editProjectTaskSheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, Dialog, Menu } from "heroui-native";
+import { Button, Checkbox, Dialog, Menu } from "heroui-native";
 import React, { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useCSSVariable } from "uniwind";
@@ -63,11 +63,21 @@ export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
           delayLongPress={250}
           style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
         >
-          <Menu.Trigger ref={menuTriggerRef} isDisabled>
-            <View className="bg-secondary p-3 rounded-xl mb-3">
-              <Text className="flex-1 text-text text-base font-medium">
-                {task.title}
-              </Text>
+          <Menu.Trigger
+            className={`mb-3 ${task.is_completed ? "opacity-50" : "opacity-100"}`}
+            ref={menuTriggerRef}
+            isDisabled
+          >
+            <View className="bg-secondary p-3 rounded-xl ">
+              <View className="flex-row items-center">
+                <Checkbox
+                  className="border border-accent size-5 rounded-md"
+                  isSelected={task.is_completed}
+                />
+                <Text className="flex-1 ml-2 text-text text-base font-medium">
+                  {task.title}
+                </Text>
+              </View>
 
               <Text className="text-text text-sm mt-2">{task.description}</Text>
             </View>
