@@ -1,8 +1,10 @@
 import { ProjectTaskResource } from "@/client";
 import {
   projectsShowQueryKey,
+  projectsTasksCompleteMutation,
   projectsTasksDestroyMutation,
   projectsTasksIndexQueryKey,
+  projectsTasksReopenMutation,
 } from "@/client/@tanstack/react-query.gen";
 import { openEditProjectTaskSheet } from "@/components/projects/projectTask/editProjectTaskSheet";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -14,6 +16,7 @@ import { useCSSVariable } from "uniwind";
 
 export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
   const menuTriggerRef = useRef<React.ElementRef<typeof Menu.Trigger>>(null);
+  const didLongPressRef = useRef(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const queryClient = useQueryClient();
   const danger = useCSSVariable("--color-danger");
@@ -37,7 +40,22 @@ export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
     },
   });
 
+  const completeTaskMut = useMutation({
+    ...projectsTasksCompleteMutation(),
+    onSuccess: () => {
+      invalidateTaskQueries();
+    },
+  });
+
+  const reopenTaskMut = useMutation({
+    ...projectsTasksReopenMutation(),
+    onSuccess: () => {
+      invalidateTaskQueries();
+    },
+  });
+
   const openMenuOnHold = () => {
+    didLongPressRef.current = true;
     menuTriggerRef.current?.open();
   };
 
@@ -55,16 +73,46 @@ export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
     });
   };
 
+  const handleToggleComplete = () => {
+    if (didLongPressRef.current) {
+      didLongPressRef.current = false;
+      return;
+    }
+
+    if (
+      deleteTaskMut.isPending ||
+      completeTaskMut.isPending ||
+      reopenTaskMut.isPending
+    ) {
+      return;
+    }
+
+    if (task.is_completed) {
+      reopenTaskMut.mutate({
+        path: { project: task.project_id, task: task.id },
+      });
+      return;
+    }
+
+    completeTaskMut.mutate({
+      path: { project: task.project_id, task: task.id },
+    });
+  };
+
   return (
     <>
       <Menu>
         <Pressable
+          onPressIn={() => {
+            didLongPressRef.current = false;
+          }}
+          onPress={handleToggleComplete}
           onLongPress={openMenuOnHold}
           delayLongPress={250}
           style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}
         >
           <Menu.Trigger
-            className={`mb-3 ${task.is_completed ? "opacity-50" : "opacity-100"}`}
+            className={`mb-3 transition-opacity ${task.is_completed ? "opacity-50" : "opacity-100"}`}
             ref={menuTriggerRef}
             isDisabled
           >
