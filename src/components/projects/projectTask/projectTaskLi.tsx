@@ -1,66 +1,58 @@
-import { EventResource } from "@/client";
+import { ProjectTaskResource } from "@/client";
 import {
-  eventsDestroyMutation,
-  eventsIndexQueryKey,
+  projectsShowQueryKey,
+  projectsTasksDestroyMutation,
+  projectsTasksIndexQueryKey,
 } from "@/client/@tanstack/react-query.gen";
-import { openEditSchoolSheet } from "@/components/home/school/editSchoolSheet";
-import Tag from "@/components/tag";
-import { COLORS } from "@/constants/COLORS";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { openEditProjectTaskSheet } from "@/components/projects/projectTask/editProjectTaskSheet";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { format, parseISO } from "date-fns";
-import { cs } from "date-fns/locale/cs";
 import { Button, Dialog, Menu } from "heroui-native";
 import React, { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useCSSVariable } from "uniwind";
 
-type SchoolLiProps = {
-  school: EventResource;
-};
-
-export default function SchoolLi({ school }: SchoolLiProps) {
+export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
   const menuTriggerRef = useRef<React.ElementRef<typeof Menu.Trigger>>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const queryClient = useQueryClient();
+  const danger = useCSSVariable("--color-danger");
 
-  const parsedCreatedAt = parseISO(school.due_date);
-  const formattedCreatedAt = Number.isNaN(parsedCreatedAt.getTime())
-    ? school.created_at
-    : format(parsedCreatedAt, "d. MMMM yyyy", { locale: cs });
-
-  const handleUpdate = () => {
-    openEditSchoolSheet(school);
-  };
-
-  const deleteSchoolMut = useMutation({
-    ...eventsDestroyMutation(),
-    onSuccess: () => {
-      setIsDeleteDialogOpen(false);
-      queryClient.invalidateQueries({
-        queryKey: eventsIndexQueryKey({ query: { event_type: "school" } }),
-      });
-    },
-  });
-
-  const handleDelete = () => {
-    if (deleteSchoolMut.isPending) {
-      return;
-    }
-
-    deleteSchoolMut.mutate({
-      path: { event: school.id },
+  const invalidateTaskQueries = () => {
+    queryClient.invalidateQueries({
+      queryKey: projectsTasksIndexQueryKey({
+        path: { project: task.project_id },
+      }),
+    });
+    queryClient.invalidateQueries({
+      queryKey: projectsShowQueryKey({ path: { project: task.project_id } }),
     });
   };
 
-  const openDeleteDialog = () => setIsDeleteDialogOpen(true);
-
-  const handleConfirmDelete = () => handleDelete();
-
-  const danger = useCSSVariable("--color-danger");
+  const deleteTaskMut = useMutation({
+    ...projectsTasksDestroyMutation(),
+    onSuccess: () => {
+      setIsDeleteDialogOpen(false);
+      invalidateTaskQueries();
+    },
+  });
 
   const openMenuOnHold = () => {
     menuTriggerRef.current?.open();
+  };
+
+  const handleUpdate = () => openEditProjectTaskSheet(task);
+
+  const openDeleteDialog = () => setIsDeleteDialogOpen(true);
+
+  const handleConfirmDelete = () => {
+    if (deleteTaskMut.isPending) {
+      return;
+    }
+
+    deleteTaskMut.mutate({
+      path: { project: task.project_id, task: task.id },
+    });
   };
 
   return (
@@ -73,23 +65,11 @@ export default function SchoolLi({ school }: SchoolLiProps) {
         >
           <Menu.Trigger ref={menuTriggerRef} isDisabled>
             <View className="bg-secondary p-3 rounded-xl mb-3">
-              <View className="flex-row items-center">
-                <Text className="flex-1 text-text text-base font-medium">
-                  {school.title}
-                </Text>
-                <View>{school.tag && <Tag tag={school.tag} />}</View>
-              </View>
-              <View className="flex-row items-center gap-1.5 mt-1">
-                <Ionicons
-                  name="calendar-outline"
-                  size={14}
-                  color={COLORS.muted}
-                />
-                <Text className="text-muted text-xs">{formattedCreatedAt}</Text>
-              </View>
-              <Text className="text-text text-sm mt-2">
-                {school.description}
+              <Text className="flex-1 text-text text-base font-medium">
+                {task.title}
               </Text>
+
+              <Text className="text-text text-sm mt-2">{task.description}</Text>
             </View>
           </Menu.Trigger>
         </Pressable>
@@ -145,12 +125,12 @@ export default function SchoolLi({ school }: SchoolLiProps) {
                     />
                   </View>
                 </View>
-                <Dialog.Title>Odstranit školní událost</Dialog.Title>
+                <Dialog.Title>Odstranit úkol</Dialog.Title>
               </View>
 
               <Dialog.Description>
-                Opravdu chcete odstranit tuto školní událost? Tuto akci nelze
-                vrátit zpět.
+                Opravdu chcete odstranit tento úkol? Tuto akci nelze vrátit
+                zpět.
               </Dialog.Description>
             </View>
             <View className="flex-row justify-end gap-3">
