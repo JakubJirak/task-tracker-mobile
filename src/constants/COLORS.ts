@@ -3,8 +3,8 @@ export const COLORS = {
   accent600: "#6536f1",
   accent500: "#7759f9",
   primary: "#0d0d0d", // 5%
-  secondary: "#1a1a1a", // 8%
-  sheet: "#121212", // 7%
+  secondary: "#1b1b1e", // 8%
+  sheet: "#121214", // 7%
   tint: "#b69cff",
   muted: "#8c8c8c",
   text: "#fafafa",
