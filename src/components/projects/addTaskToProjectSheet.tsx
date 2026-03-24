@@ -1,11 +1,10 @@
 import {
   projectsShowQueryKey,
-  projectsTasksIndexQueryKey,
-  projectsTasksUpdateMutation,
+  projectsTasksStoreMutation,
 } from "@/client/@tanstack/react-query.gen";
-import { ProjectTaskResource } from "@/client/types.gen";
 import { useAppForm } from "@/components/forms/formContext";
 import { COLORS } from "@/constants/COLORS";
+import { useProjectContext } from "@/contexts/ProjectContext";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import MaterialDesignIcons from "@react-native-vector-icons/material-design-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -13,19 +12,7 @@ import { useRef } from "react";
 import { Text, View } from "react-native";
 import { z } from "zod";
 
-type ProjectTaskPreview = Pick<
-  ProjectTaskResource,
-  "id" | "title" | "description" | "is_completed" | "project_id"
->;
-
-let activeProjectTaskDraft: ProjectTaskPreview | null = null;
-
-export const openEditProjectTaskSheet = async (task: ProjectTaskPreview) => {
-  activeProjectTaskDraft = task;
-  await TrueSheet.present("editProjectTask");
-};
-
-const editProjectTaskSchema = z.object({
+const addTaskToProjectSchema = z.object({
   title: z
     .string()
     .trim()
@@ -38,9 +25,10 @@ const editProjectTaskSchema = z.object({
     .max(255, "Popis může mít maximálně 255 znaků"),
 });
 
-export default function EditProjectTaskSheet() {
+export default function AddTaskToProjectSheet() {
   const sheet = useRef<TrueSheet>(null);
   const queryClient = useQueryClient();
+  const { projectId } = useProjectContext();
 
   const form = useAppForm({
     defaultValues: {
@@ -48,72 +36,53 @@ export default function EditProjectTaskSheet() {
       description: "",
     },
     validators: {
-      onSubmit: editProjectTaskSchema,
+      onSubmit: addTaskToProjectSchema,
     },
     onSubmit: ({ value }) => {
-      if (!activeProjectTaskDraft) return;
-
-      editProjectTaskMut.mutate({
-        path: {
-          project: activeProjectTaskDraft.project_id,
-          task: activeProjectTaskDraft.id,
-        },
-        body: {
-          title: value.title.trim(),
-          description: value.description.trim(),
-          project_id: activeProjectTaskDraft.project_id,
-          is_completed: activeProjectTaskDraft.is_completed,
-        },
-      });
-    },
-  });
-
-  const editProjectTaskMut = useMutation({
-    ...projectsTasksUpdateMutation(),
-    onSuccess: () => {
-      if (!activeProjectTaskDraft) {
+      if (projectId === null || !Number.isFinite(projectId)) {
         return;
       }
 
-      form.reset();
-      sheet.current?.dismiss();
-      queryClient.invalidateQueries({
-        queryKey: projectsTasksIndexQueryKey({
-          path: { project: activeProjectTaskDraft.project_id },
-        }),
-      });
-      queryClient.invalidateQueries({
-        queryKey: projectsShowQueryKey({
-          path: { project: activeProjectTaskDraft.project_id },
-        }),
+      const currentProjectId: number = projectId;
+
+      addTaskMut.mutate({
+        path: { project: currentProjectId },
+        body: {
+          title: value.title.trim(),
+          description: value.description.trim(),
+          project_id: currentProjectId,
+        },
       });
     },
   });
 
-  const hydrateFromTask = (task: ProjectTaskPreview) => {
-    form.reset();
+  const addTaskMut = useMutation({
+    ...projectsTasksStoreMutation(),
+    onSuccess: () => {
+      form.reset();
+      sheet.current?.dismiss();
 
-    form.setFieldValue("title", task.title);
-    form.setFieldValue("description", task.description ?? "");
-  };
+      if (projectId === null || !Number.isFinite(projectId)) {
+        return;
+      }
+
+      const currentProjectId: number = projectId;
+
+      queryClient.invalidateQueries({
+        queryKey: projectsShowQueryKey({ path: { project: currentProjectId } }),
+      });
+    },
+  });
 
   return (
     <TrueSheet
-      name="editProjectTask"
+      name="addTaskToProject"
       ref={sheet}
       detents={[0.7, 1]}
       cornerRadius={24}
       dimmedDetentIndex={0.1}
       backgroundColor={COLORS.sheet}
-      onWillPresent={() => {
-        if (activeProjectTaskDraft) {
-          hydrateFromTask(activeProjectTaskDraft);
-        } else {
-          form.reset();
-        }
-      }}
       onDidDismiss={() => {
-        activeProjectTaskDraft = null;
         form.reset();
       }}
       footer={() => (
@@ -125,27 +94,17 @@ export default function EditProjectTaskSheet() {
             })}
           >
             {({ title, description }) => {
-              const originalTitle = activeProjectTaskDraft?.title.trim() ?? "";
-              const originalDescription =
-                activeProjectTaskDraft?.description?.trim() ?? "";
-
-              const currentTitle = title.trim();
-              const currentDescription = description.trim();
-
-              const isUnchanged =
-                currentTitle === originalTitle &&
-                currentDescription === originalDescription;
-
               const isDisabled =
-                !currentTitle ||
-                !currentDescription ||
-                isUnchanged ||
-                editProjectTaskMut.isPending;
+                !title.trim() ||
+                !description.trim() ||
+                addTaskMut.isPending ||
+                projectId === null ||
+                !Number.isFinite(projectId);
 
               return (
                 <form.SubmitButton
-                  label="Uložit změny"
-                  pendingLabel="Ukládám..."
+                  label="Přidat úkol"
+                  pendingLabel="Vytvářím..."
                   disabled={isDisabled}
                 />
               );
@@ -157,11 +116,11 @@ export default function EditProjectTaskSheet() {
       <View className="px-3 pt-6">
         <View className="flex-row self-center mt-3 items-center gap-2">
           <MaterialDesignIcons
-            name="clipboard-edit-outline"
-            size={24}
+            name="clipboard-plus-outline"
+            size={28}
             color={COLORS.text}
           />
-          <Text className="text-text text-xl font-bold">Upravit úkol</Text>
+          <Text className="text-text text-xl font-bold">Přidat úkol</Text>
         </View>
 
         <View className="mt-5 gap-5">
@@ -182,7 +141,7 @@ export default function EditProjectTaskSheet() {
               children={(field) => (
                 <field.TextInputField
                   label="Popis"
-                  placeholder="Např. Upravit dokumentaci a testy"
+                  placeholder="Např. Dopsat dokumentaci"
                   multiline
                   numberOfLines={4}
                   textAlignVertical="top"
