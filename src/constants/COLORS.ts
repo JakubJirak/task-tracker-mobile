@@ -2,6 +2,7 @@ export const COLORS = {
   accent: "#5121d3",
   accent600: "#6536f1",
   accent500: "#7759f9",
+  accent800: "#471eb9",
   primary: "#0d0d0d", // 5%
   secondary: "#1b1b1e", // 8%
   sheet: "#121214", // 7%
