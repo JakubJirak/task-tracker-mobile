@@ -23,10 +23,12 @@ export function AppFormSubmitButton({
           <TouchableOpacity
             onPress={form.handleSubmit}
             disabled={isDisabled}
-            className={`py-3 mx-4 rounded-xl mb-6 bg-accent ${isDisabled ? "bg-accent/50" : ""}`}
+            className={`py-3 mx-4 rounded-xl mb-6 bg-accent ${isDisabled ? "bg-accent-900" : ""}`}
             activeOpacity={0.7}
           >
-            <Text className="text-white text-lg text-center font-semibold">
+            <Text
+              className={`text-white text-lg text-center font-semibold ${isDisabled ? "text-muted" : ""}`}
+            >
               {isSubmitting ? (pendingLabel ?? label) : label}
             </Text>
           </TouchableOpacity>
