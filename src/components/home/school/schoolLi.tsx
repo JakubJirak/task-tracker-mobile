@@ -10,6 +10,7 @@ import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO } from "date-fns";
 import { cs } from "date-fns/locale/cs";
+import * as Haptics from "expo-haptics";
 import { Button, Dialog, Menu } from "heroui-native";
 import React, { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -61,6 +62,7 @@ export default function SchoolLi({ school }: SchoolLiProps) {
 
   const openMenuOnHold = () => {
     menuTriggerRef.current?.open();
+    Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Long_Press);
   };
 
   return (

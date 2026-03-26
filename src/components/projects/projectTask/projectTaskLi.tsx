@@ -9,6 +9,7 @@ import {
 import { openEditProjectTaskSheet } from "@/components/projects/projectTask/editProjectTaskSheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import * as Haptics from "expo-haptics";
 import { Button, Checkbox, Dialog, Menu } from "heroui-native";
 import React, { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -57,6 +58,7 @@ export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
   const openMenuOnHold = () => {
     didLongPressRef.current = true;
     menuTriggerRef.current?.open();
+    Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Long_Press);
   };
 
   const handleUpdate = () => openEditProjectTaskSheet(task);

@@ -13,6 +13,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns/format";
 import { cs } from "date-fns/locale/cs";
 import { parseISO } from "date-fns/parseISO";
+import * as Haptics from "expo-haptics";
 import { Button, Checkbox, Dialog, Menu } from "heroui-native";
 import React, { useRef, useState } from "react";
 import { Pressable, Text, View } from "react-native";
@@ -110,6 +111,7 @@ export default function TaskLi({
   const openMenuOnHold = () => {
     didLongPressRef.current = true;
     menuTriggerRef.current?.open();
+    Haptics.performAndroidHapticsAsync(Haptics.AndroidHaptics.Long_Press);
   };
 
   const handleToggleComplete = () => {
