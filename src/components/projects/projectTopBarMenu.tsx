@@ -203,7 +203,7 @@ export default function ProjectTopBarMenu({ project }: ProjectTopBarMenuProps) {
                     color="white"
                   />
                   <Text className="text-base font-medium text-white">
-                    {project?.is_completed ? "Otevrit" : "Splnit"}
+                    {project?.is_completed ? "Otevřít" : "Splnit"}
                   </Text>
                 </View>
               </Menu.ItemTitle>

@@ -1,4 +1,5 @@
 import AddProjectSheet from "@/components/projects/addProjectSheet";
+import EditProjectSheet from "@/components/projects/editProjectSheet";
 import { COLORS } from "@/constants/COLORS";
 import {
   createMaterialTopTabNavigator,
@@ -46,6 +47,8 @@ export default function RootLayout() {
           options={{ title: "Splněné" }}
         />
       </ExpoRouterMaterialTopTabs>
+
+      <EditProjectSheet />
 
       <View
         pointerEvents="box-none"
