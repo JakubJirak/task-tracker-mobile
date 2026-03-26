@@ -1,0 +1,275 @@
+import { ProjectResource } from "@/client";
+import {
+  projectsCompleteMutation,
+  projectsDestroyMutation,
+  projectsIndexQueryKey,
+  projectsReopenMutation,
+  projectsShowQueryKey,
+} from "@/client/@tanstack/react-query.gen";
+import { openEditProjectSheet } from "@/components/projects/editProjectSheet";
+import { COLORS } from "@/constants/COLORS";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
+import { Button, Dialog, Menu } from "heroui-native";
+import React, { useRef, useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import { useCSSVariable } from "uniwind";
+
+type ProjectTopBarMenuProps = {
+  project?: ProjectResource;
+};
+
+export default function ProjectTopBarMenu({ project }: ProjectTopBarMenuProps) {
+  const menuTriggerRef = useRef<React.ElementRef<typeof Menu.Trigger>>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const danger = useCSSVariable("--color-danger");
+
+  const invalidateProjectQueries = async (projectId: number) => {
+    await queryClient.invalidateQueries({
+      predicate: (query) =>
+        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
+        "projectsIndex",
+    });
+    await queryClient.invalidateQueries({
+      predicate: (query) =>
+        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
+        "projectsShow",
+    });
+    await queryClient.refetchQueries({
+      predicate: (query) =>
+        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
+        "projectsIndex",
+      type: "all",
+    });
+
+    await queryClient.invalidateQueries({ queryKey: projectsIndexQueryKey() });
+    await queryClient.invalidateQueries({
+      queryKey: projectsShowQueryKey({ path: { project: projectId } }),
+    });
+  };
+
+  const handleAfterProjectCompletion = () => {
+    // Reserved for future post-completion behavior.
+  };
+
+  const completeProjectMut = useMutation({
+    ...projectsCompleteMutation(),
+    onSuccess: async () => {
+      if (!project) {
+        return;
+      }
+
+      await invalidateProjectQueries(project.id);
+      handleAfterProjectCompletion();
+    },
+  });
+
+  const reopenProjectMut = useMutation({
+    ...projectsReopenMutation(),
+    onSuccess: async () => {
+      if (!project) {
+        return;
+      }
+
+      await invalidateProjectQueries(project.id);
+      handleAfterProjectCompletion();
+    },
+  });
+
+  const deleteProjectMut = useMutation({
+    ...projectsDestroyMutation(),
+    onSuccess: async () => {
+      if (!project) {
+        return;
+      }
+
+      const parentProjectId = project.parent_id;
+      const deletedProjectId = project.id;
+
+      setIsDeleteDialogOpen(false);
+      await invalidateProjectQueries(deletedProjectId);
+      queryClient.removeQueries({
+        queryKey: projectsShowQueryKey({ path: { project: deletedProjectId } }),
+      });
+
+      if (parentProjectId) {
+        router.replace({
+          pathname: "/proj/[id]",
+          params: { id: parentProjectId.toString() },
+        });
+        return;
+      }
+
+      router.replace("/projects");
+    },
+  });
+
+  const handleUpdate = () => {
+    if (!project) {
+      return;
+    }
+
+    openEditProjectSheet(project);
+  };
+
+  const handleToggleCompletion = () => {
+    if (!project) {
+      return;
+    }
+
+    if (
+      completeProjectMut.isPending ||
+      reopenProjectMut.isPending ||
+      deleteProjectMut.isPending
+    ) {
+      return;
+    }
+
+    if (project.is_completed) {
+      reopenProjectMut.mutate({
+        path: { project: project.id },
+      });
+      return;
+    }
+
+    completeProjectMut.mutate({
+      path: { project: project.id },
+    });
+  };
+
+  const openDeleteDialog = () => {
+    if (deleteProjectMut.isPending || !project) {
+      return;
+    }
+
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!project || deleteProjectMut.isPending) {
+      return;
+    }
+
+    deleteProjectMut.mutate({
+      path: { project: project.id },
+    });
+  };
+
+  return (
+    <>
+      <Menu>
+        <Pressable onPress={() => project && menuTriggerRef.current?.open()}>
+          <Menu.Trigger ref={menuTriggerRef} isDisabled>
+            <View className="">
+              <MaterialIcons
+                name="more-vert"
+                size={24}
+                color={project ? COLORS.text : COLORS.muted}
+              />
+            </View>
+          </Menu.Trigger>
+        </Pressable>
+
+        <Menu.Portal>
+          <Menu.Overlay className="flex-1 bg-black/50" />
+          <Menu.Content
+            className="bg-secondary rounded-xl p-2 -mt-10"
+            presentation="popover"
+            width={180}
+            placement="bottom"
+          >
+            <Menu.Item onPress={handleUpdate}>
+              <Menu.ItemTitle>
+                <View className="flex-row items-center gap-1.5">
+                  <MaterialIcons name="edit" size={20} color="white" />
+                  <Text className="text-base font-medium text-white">
+                    Upravit
+                  </Text>
+                </View>
+              </Menu.ItemTitle>
+            </Menu.Item>
+
+            <Menu.Item onPress={handleToggleCompletion}>
+              <Menu.ItemTitle>
+                <View className="flex-row items-center gap-1.5">
+                  <MaterialIcons
+                    name={
+                      project?.is_completed ? "history" : "check-circle-outline"
+                    }
+                    size={20}
+                    color="white"
+                  />
+                  <Text className="text-base font-medium text-white">
+                    {project?.is_completed ? "Otevrit" : "Splnit"}
+                  </Text>
+                </View>
+              </Menu.ItemTitle>
+            </Menu.Item>
+
+            <Menu.Item variant="danger" onPress={openDeleteDialog}>
+              <Menu.ItemTitle>
+                <View className="flex-row items-center gap-1.5">
+                  <MaterialIcons
+                    name="delete-outline"
+                    size={20}
+                    color={danger as string}
+                  />
+                  <Text className="text-base font-medium text-danger">
+                    Odstranit
+                  </Text>
+                </View>
+              </Menu.ItemTitle>
+            </Menu.Item>
+          </Menu.Content>
+        </Menu.Portal>
+      </Menu>
+
+      <Dialog isOpen={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="flex-1 bg-black/60" />
+          <Dialog.Content className="bg-secondary">
+            <View className="mb-5 gap-1.5">
+              <View className="flex-row items-center gap-2">
+                <View>
+                  <View className="bg-danger-soft p-1 rounded-full">
+                    <MaterialIcons
+                      name="delete-outline"
+                      size={20}
+                      color={danger as string}
+                    />
+                  </View>
+                </View>
+                <Dialog.Title>Odstranit projekt</Dialog.Title>
+              </View>
+
+              <Dialog.Description>
+                Opravdu chcete odstranit tento projekt? Tuto akci nelze vrátit
+                zpět.
+              </Dialog.Description>
+            </View>
+
+            <View className="flex-row justify-end gap-3">
+              <Button
+                variant="tertiary"
+                size="sm"
+                onPress={() => setIsDeleteDialogOpen(false)}
+              >
+                Zrušit
+              </Button>
+              <Button
+                size="sm"
+                variant="danger-soft"
+                onPress={handleConfirmDelete}
+              >
+                Odstranit
+              </Button>
+            </View>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog>
+    </>
+  );
+}

@@ -1,5 +1,7 @@
 import { projectsShowOptions } from "@/client/@tanstack/react-query.gen";
 import BottomBar from "@/components/projects/bottomBar";
+import EditProjectSheet from "@/components/projects/editProjectSheet";
+import ProjectTopBarMenu from "@/components/projects/projectTopBarMenu";
 import TopBar from "@/components/topBar";
 import { COLORS } from "@/constants/COLORS";
 import ProjectContext from "@/contexts/ProjectContext";
@@ -46,7 +48,10 @@ export default function RootLayout() {
     >
       <View className="flex-1 bg-primary">
         <View className="px-3 -mb-4">
-          <TopBar title={project?.data.title ?? "Projekt"} />
+          <TopBar
+            title={project?.data.title ?? "Projekt"}
+            rightContent={<ProjectTopBarMenu project={project?.data} />}
+          />
         </View>
 
         <ExpoRouterMaterialTopTabs
@@ -79,6 +84,7 @@ export default function RootLayout() {
           />
         </ExpoRouterMaterialTopTabs>
       </View>
+      <EditProjectSheet />
       <BottomBar />
     </ProjectContext.Provider>
   );
