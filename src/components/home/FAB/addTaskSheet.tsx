@@ -13,7 +13,7 @@ export default function AddReminderSheet() {
   return (
     <View>
       <TrueSheet
-        name="addTaskFAB"
+        name="addTaskSheet"
         ref={sheet}
         detents={[0.9, 1]}
         cornerRadius={24}

@@ -8,6 +8,7 @@ import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import MaterialDesignIcons from "@react-native-vector-icons/material-design-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { Href, useRouter } from "expo-router";
 import { useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { z } from "zod";
@@ -27,18 +28,47 @@ const addReminderSchema = z.object({
   tag: z.number().int().positive().nullable(),
 });
 
-export default function AddReminderSheet() {
+type AddReminderSheetProps = {
+  showTrigger?: boolean;
+  registerSheet?: boolean;
+  redirectOnSuccessTo?: Href;
+};
+
+let pendingReminderRedirectTarget: Href | undefined;
+
+export const openAddReminderSheet = async (options?: {
+  redirectOnSuccessTo?: Href;
+}) => {
+  pendingReminderRedirectTarget = options?.redirectOnSuccessTo;
+  await TrueSheet.present("addReminder");
+};
+
+export default function AddReminderSheet({
+  showTrigger = true,
+  registerSheet = true,
+  redirectOnSuccessTo,
+}: AddReminderSheetProps) {
   const sheet = useRef<TrueSheet>(null);
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const addReminderMut = useMutation({
     ...eventsStoreMutation(),
-    onSuccess: () => {
+    onSuccess: async () => {
       form.reset();
-      sheet.current?.dismiss();
-      queryClient.invalidateQueries({
+      await sheet.current?.dismiss();
+      await queryClient.invalidateQueries({
         queryKey: eventsIndexQueryKey({ query: { event_type: "reminder" } }),
       });
+
+      const redirectTarget =
+        pendingReminderRedirectTarget ?? redirectOnSuccessTo;
+
+      if (redirectTarget) {
+        router.push(redirectTarget);
+      }
+
+      pendingReminderRedirectTarget = undefined;
     },
   });
 
@@ -66,114 +96,123 @@ export default function AddReminderSheet() {
   });
 
   const present = async () => {
-    await sheet.current?.present();
+    await openAddReminderSheet();
   };
 
   return (
-    <View className="relative flex-1">
-      <TouchableOpacity
-        onPress={present}
-        className="bg-accent p-4 rounded-2xl absolute right-0 shadow-lg shadow-primary"
-        activeOpacity={0.6}
-      >
-        <MaterialDesignIcons name="plus" size={24} color="white" />
-      </TouchableOpacity>
-      <TrueSheet
-        name="addReminder"
-        ref={sheet}
-        detents={[0.9, 1]}
-        cornerRadius={24}
-        dimmedDetentIndex={0.1}
-        backgroundColor={COLORS.sheet}
-        footer={() => (
-          <form.AppForm>
-            <form.Subscribe
-              selector={(state) => ({
-                title: state.values.title,
-                description: state.values.description,
-                date: state.values.date,
-              })}
-            >
-              {({ title, description, date }) => {
-                const isDisabled =
-                  !title.trim() ||
-                  !description.trim() ||
-                  !date ||
-                  addReminderMut.isPending;
-
-                return (
-                  <form.SubmitButton
-                    label="Přidat událost"
-                    pendingLabel="Vytvářím..."
-                    disabled={isDisabled}
-                  />
-                );
-              }}
-            </form.Subscribe>
-          </form.AppForm>
-        )}
-      >
-        <View className="px-3 pt-6">
-          <View className="flex-row self-center mt-3 items-center gap-2">
-            <MaterialDesignIcons
-              name="bell-plus-outline"
-              size={28}
-              color={COLORS.text}
-            />
-            <Text className="text-text text-xl font-bold">Přidat událost</Text>
-          </View>
-
-          <View className="mt-5 gap-5">
+    <View className={showTrigger ? "relative flex-1" : undefined}>
+      {showTrigger ? (
+        <TouchableOpacity
+          onPress={present}
+          className="bg-accent p-4 rounded-2xl absolute right-0 shadow-lg shadow-primary"
+          activeOpacity={0.6}
+        >
+          <MaterialDesignIcons name="plus" size={24} color="white" />
+        </TouchableOpacity>
+      ) : null}
+      {registerSheet ? (
+        <TrueSheet
+          name="addReminder"
+          ref={sheet}
+          detents={[0.9, 1]}
+          cornerRadius={24}
+          dimmedDetentIndex={0.1}
+          backgroundColor={COLORS.sheet}
+          onDidDismiss={() => {
+            pendingReminderRedirectTarget = undefined;
+          }}
+          footer={() => (
             <form.AppForm>
-              <form.AppField
-                name="title"
-                children={(field) => (
-                  <field.TextInputField
-                    label="Název"
-                    placeholder="Název události"
-                    autoCorrect={false}
-                  />
-                )}
-              />
+              <form.Subscribe
+                selector={(state) => ({
+                  title: state.values.title,
+                  description: state.values.description,
+                  date: state.values.date,
+                })}
+              >
+                {({ title, description, date }) => {
+                  const isDisabled =
+                    !title.trim() ||
+                    !description.trim() ||
+                    !date ||
+                    addReminderMut.isPending;
 
-              <form.AppField
-                name="description"
-                children={(field) => (
-                  <field.TextInputField
-                    label="Popis"
-                    placeholder="Popis události"
-                    multiline
-                    numberOfLines={4}
-                    textAlignVertical="top"
-                    className="bg-secondary border-secondary rounded-lg text-base min-h-20 px-3 py-3 text-text"
-                  />
-                )}
-              />
-
-              <form.AppField
-                name="date"
-                children={(field) => (
-                  <field.DatePickerField
-                    label="Datum"
-                    placeholder="Vybrat datum"
-                  />
-                )}
-              />
-
-              <form.AppField
-                name="tag"
-                children={(field) => (
-                  <field.TagSelectorField
-                    label="Tag (nepovinné)"
-                    tagsType="reminder"
-                    placeholder="Vybrat tag"
-                  />
-                )}
-              />
+                  return (
+                    <form.SubmitButton
+                      label="Přidat událost"
+                      pendingLabel="Vytvářím..."
+                      disabled={isDisabled}
+                    />
+                  );
+                }}
+              </form.Subscribe>
             </form.AppForm>
+          )}
+        >
+          <View className="px-3 pt-6">
+            <View className="flex-row self-center mt-3 items-center gap-2">
+              <MaterialDesignIcons
+                name="bell-plus-outline"
+                size={28}
+                color={COLORS.text}
+              />
+              <Text className="text-text text-xl font-bold">
+                Přidat událost
+              </Text>
+            </View>
+
+            <View className="mt-5 gap-5">
+              <form.AppForm>
+                <form.AppField
+                  name="title"
+                  children={(field) => (
+                    <field.TextInputField
+                      label="Název"
+                      placeholder="Název události"
+                      autoCorrect={false}
+                    />
+                  )}
+                />
+
+                <form.AppField
+                  name="description"
+                  children={(field) => (
+                    <field.TextInputField
+                      label="Popis"
+                      placeholder="Popis události"
+                      multiline
+                      numberOfLines={4}
+                      textAlignVertical="top"
+                      className="bg-secondary border-secondary rounded-lg text-base min-h-20 px-3 py-3 text-text"
+                    />
+                  )}
+                />
+
+                <form.AppField
+                  name="date"
+                  children={(field) => (
+                    <field.DatePickerField
+                      label="Datum"
+                      placeholder="Vybrat datum"
+                    />
+                  )}
+                />
+
+                <form.AppField
+                  name="tag"
+                  children={(field) => (
+                    <field.TagSelectorField
+                      label="Tag (nepovinné)"
+                      tagsType="reminder"
+                      placeholder="Vybrat tag"
+                    />
+                  )}
+                />
+              </form.AppForm>
+            </View>
           </View>
-        </View>
-      </TrueSheet>
+        </TrueSheet>
+      ) : null}
     </View>
   );
 }

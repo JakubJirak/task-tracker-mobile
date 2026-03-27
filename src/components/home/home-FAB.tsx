@@ -1,4 +1,6 @@
-import { TrueSheet } from "@lodev09/react-native-true-sheet";
+import { openAddReminderSheet } from "@/components/home/reminders/addReminderSheet";
+import { openAddSchoolSheet } from "@/components/home/school/addSchoolSheet";
+import { openAddTaskSheet } from "@/components/home/tasks/addTaskSheet";
 import * as React from "react";
 import { FAB, PaperProvider, Portal } from "react-native-paper";
 import { COLORS } from "../../constants/COLORS";
@@ -23,17 +25,26 @@ const HomeFAB = () => {
             {
               icon: "check",
               label: "Úkoly",
-              onPress: () => TrueSheet.present("addTaskFAB"),
+              onPress: () =>
+                openAddTaskSheet({
+                  redirectOnSuccessTo: "/(auth)/(tabs)/home/tasks",
+                }),
             },
             {
               icon: "bell",
               label: "Události",
-              onPress: () => TrueSheet.present("addReminderFAB"),
+              onPress: () =>
+                openAddReminderSheet({
+                  redirectOnSuccessTo: "/(auth)/(tabs)/home/reminders",
+                }),
             },
             {
               icon: "school",
               label: "Škola",
-              onPress: () => TrueSheet.present("addSchoolFAB"),
+              onPress: () =>
+                openAddSchoolSheet({
+                  redirectOnSuccessTo: "/(auth)/(tabs)/home/school",
+                }),
             },
           ]}
           onStateChange={onStateChange}
