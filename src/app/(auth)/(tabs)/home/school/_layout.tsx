@@ -1,6 +1,6 @@
+import EventsTopBar from "@/components/home/eventsTopBar";
 import AddSchoolSheet from "@/components/home/school/addSchoolSheet";
 import EditSchoolSheet from "@/components/home/school/editSchoolSheet";
-import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
 import {
   createMaterialTopTabNavigator,
@@ -67,7 +67,7 @@ export default function RootLayout() {
         pointerEvents="box-none"
         className="absolute left-0 right-7 bottom-22"
       >
-        <AddSchoolSheet />
+        <AddSchoolSheet registerSheet={false} />
         <EditSchoolSheet />
       </View>
     </View>

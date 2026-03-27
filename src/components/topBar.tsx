@@ -16,7 +16,7 @@ export default function TopBar({ title, rightContent }: TopBarProps) {
     <View className="flex-row items-center py-4 gap-4">
       <View className="flex-row flex-1 items-center gap-4">
         <TouchableOpacity activeOpacity={0.5} onPress={() => router.back()}>
-          <Ionicons name="chevron-back" size={28} color={COLORS.accent} />
+          <Ionicons name="chevron-back" size={28} color={COLORS.accent600} />
         </TouchableOpacity>
         <Text className="flex-1 text-text text-xl font-semibold">{title}</Text>
       </View>

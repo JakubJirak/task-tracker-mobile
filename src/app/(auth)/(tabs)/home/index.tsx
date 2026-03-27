@@ -1,6 +1,3 @@
-import AddReminderSheet from "@/components/home/FAB/addReminderSheet";
-import AddSchoolSheet from "@/components/home/FAB/addSchoolSheet";
-import AddTaskSheet from "@/components/home/FAB/addTaskSheet";
 import HomeFAB from "@/components/home/home-FAB";
 import { COLORS } from "@/constants/COLORS";
 import AuthContext from "@/contexts/AuthContext";
@@ -16,7 +13,7 @@ export default function Home() {
     <View className="bg-primary relative flex-1 px-3">
       <View className="flex flex-row pt-3 pb-2 items-center">
         <View className="flex-row flex-1 gap-3 items-center">
-          <Ionicons name="home-outline" size={24} color={COLORS.accent} />
+          <Ionicons name="home-outline" size={24} color={COLORS.accent600} />
           <Text className="text-text text-xl font-bold">Domů</Text>
         </View>
 
@@ -37,7 +34,7 @@ export default function Home() {
       <View className="gap-3 mt-3">
         <Link href={"/(auth)/(tabs)/home/tasks"}>
           <View className="bg-secondary w-full rounded-xl flex-row items-center gap-3 p-3">
-            <MaterialIcons name="task-alt" size={24} color={COLORS.accent} />
+            <MaterialIcons name="task-alt" size={24} color={COLORS.accent600} />
             <Text className="text-text text-base">Úkoly</Text>
           </View>
         </Link>
@@ -47,22 +44,19 @@ export default function Home() {
             <MaterialIcons
               name="notifications"
               size={24}
-              color={COLORS.accent}
+              color={COLORS.accent600}
             />
             <Text className="text-text text-base">Události</Text>
           </View>
         </Link>
         <Link href={"/(auth)/(tabs)/home/school"}>
           <View className="bg-secondary w-full rounded-xl flex-row items-center gap-3 p-3">
-            <MaterialIcons name="school" size={24} color={COLORS.accent} />
+            <MaterialIcons name="school" size={24} color={COLORS.accent600} />
             <Text className="text-text text-base">Škola</Text>
           </View>
         </Link>
       </View>
 
-      <AddReminderSheet />
-      <AddTaskSheet />
-      <AddSchoolSheet />
       <View className="absolute top-0 left-0 right-3 bottom-0">
         <HomeFAB />
       </View>

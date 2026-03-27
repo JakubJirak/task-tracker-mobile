@@ -13,7 +13,7 @@ export default function ProfileTopBar() {
   return (
     <View className="flex-row items-center py-4 gap-4">
       <TouchableOpacity activeOpacity={0.5} onPress={() => router.back()}>
-        <Ionicons name="chevron-back" size={28} color={COLORS.accent} />
+        <Ionicons name="chevron-back" size={28} color={COLORS.accent600} />
       </TouchableOpacity>
       <Text className="text-text  text-xl font-semibold flex-1">Profil</Text>
       <TouchableOpacity

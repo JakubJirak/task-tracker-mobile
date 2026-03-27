@@ -1,6 +1,6 @@
+import EventsTopBar from "@/components/home/eventsTopBar";
 import AddReminderSheet from "@/components/home/reminders/addReminderSheet";
 import EditReminderSheet from "@/components/home/reminders/editReminderSheet";
-import EventsTopBar from "@/components/home/eventsTopBar";
 import { COLORS } from "@/constants/COLORS";
 import {
   createMaterialTopTabNavigator,
@@ -67,7 +67,7 @@ export default function RootLayout() {
         pointerEvents="box-none"
         className="absolute left-0 right-7 bottom-22"
       >
-        <AddReminderSheet />
+        <AddReminderSheet registerSheet={false} />
         <EditReminderSheet />
       </View>
     </View>

@@ -171,7 +171,7 @@ export default function ProjectLi({ project }: { project: ProjectResource }) {
         >
           <Menu.Trigger ref={menuTriggerRef} isDisabled>
             <View
-              className={`bg-secondary p-4 rounded-xl mb-3 ${project.completion_percentage === 100 ? "opacity-50" : ""}`}
+              className={`bg-secondary p-4 rounded-xl mb-3 ${project.is_completed ? "opacity-50" : ""}`}
             >
               <View className="flex-row items-center mb-0.5">
                 <Text className="text-text text-lg font-medium flex-1">
