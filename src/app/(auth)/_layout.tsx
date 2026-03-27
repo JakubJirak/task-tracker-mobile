@@ -1,3 +1,4 @@
+import EditProjectSheet from "@/components/projects/editProjectSheet";
 import { COLORS } from "@/constants/COLORS";
 import { Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -16,6 +17,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="proj" options={{ headerShown: false }} />
       </Stack>
+      <EditProjectSheet />
     </SafeAreaView>
   );
 }
