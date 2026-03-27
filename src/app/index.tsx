@@ -10,7 +10,7 @@ export default function Index() {
         <Text className="text-text text-4xl font-light">
           Vítejte v aplikaci
         </Text>
-        <Text className="text-accent-600 text-[44px] font-semibold">
+        <Text className="text-accent text-[44px] font-semibold">
           TASK TRACKER
         </Text>
         <View className="mt-auto block w-full px-4 mb-10 gap-4">

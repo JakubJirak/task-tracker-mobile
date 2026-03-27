@@ -11,6 +11,7 @@ import { HeroUINativeConfig } from "heroui-native";
 import { HeroUINativeProvider } from "heroui-native/provider";
 import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { PaperProvider } from "react-native-paper";
 import "../../global.css";
 
@@ -52,43 +53,45 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <HeroUINativeProvider config={config}>
-        <ThemeProvider value={MyTheme}>
-          <QueryClientProvider client={queryClient}>
-            <AuthContext.Provider value={{ user, setUser }}>
-              <PaperProvider>
-                <Stack
-                  screenOptions={{
-                    contentStyle: { backgroundColor: COLORS.primary },
-                  }}
-                >
-                  <Stack.Protected guard={!!user}>
-                    <Stack.Screen
-                      name="(auth)"
-                      options={{ headerShown: false }}
-                    />
-                  </Stack.Protected>
+      <KeyboardProvider>
+        <HeroUINativeProvider config={config}>
+          <ThemeProvider value={MyTheme}>
+            <QueryClientProvider client={queryClient}>
+              <AuthContext.Provider value={{ user, setUser }}>
+                <PaperProvider>
+                  <Stack
+                    screenOptions={{
+                      contentStyle: { backgroundColor: COLORS.primary },
+                    }}
+                  >
+                    <Stack.Protected guard={!!user}>
+                      <Stack.Screen
+                        name="(auth)"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack.Protected>
 
-                  <Stack.Protected guard={!user}>
-                    <Stack.Screen
-                      name="index"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="login"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="register"
-                      options={{ headerShown: false }}
-                    />
-                  </Stack.Protected>
-                </Stack>
-              </PaperProvider>
-            </AuthContext.Provider>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </HeroUINativeProvider>
+                    <Stack.Protected guard={!user}>
+                      <Stack.Screen
+                        name="index"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="login"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="register"
+                        options={{ headerShown: false }}
+                      />
+                    </Stack.Protected>
+                  </Stack>
+                </PaperProvider>
+              </AuthContext.Provider>
+            </QueryClientProvider>
+          </ThemeProvider>
+        </HeroUINativeProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }

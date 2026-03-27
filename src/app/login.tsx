@@ -1,73 +1,120 @@
-import { COLORS } from "@/constants/COLORS";
+import { useAppForm } from "@/components/forms/formContext";
 import AuthContext from "@/contexts/AuthContext";
 import { loadUser, login } from "@/services/AuthService";
-import { useContext, useRef, useState } from "react";
-import {
-  Platform,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { useContext, useState } from "react";
+import { Platform, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().trim().email("Zadejte platný e-mail"),
+  password: z
+    .string()
+    .min(12, "Heslo musí mít alespoň 12 znaků")
+    .max(255, "Heslo může mít maximálně 255 znaků"),
+});
 
 export default function Login() {
   const { setUser } = useContext(AuthContext);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const passwordInputRef = useRef<TextInput>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
 
-  const handleLogin = async () => {
-    try {
-      await login(email, password, `${Platform.OS} ${Platform.Version}`);
-      const user = await loadUser();
-      setUser(user);
-    } catch (error) {
-      console.error("Login failed:", error);
-    }
+  const form = useAppForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    validators: {
+      onSubmit: loginSchema,
+    },
+    onSubmit: async ({ value }) => {
+      setAuthError(null);
+
+      try {
+        await login(
+          value.email.trim(),
+          value.password,
+          `${Platform.OS} ${Platform.Version}`,
+        );
+        const user = await loadUser();
+        setUser(user);
+      } catch (error) {
+        console.error("Login failed:", error);
+        setAuthError("Přihlášení se nezdařilo. Zkuste to prosím znovu.");
+      }
+    },
+  });
+
+  const isDisabled = ({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) => {
+    return !email.trim() || password.length < 12;
   };
 
   return (
     <SafeAreaView className="flex-1 bg-primary">
-      <View className="gap-4 px-6 pt-12">
-        <Text className="text-text text-3xl font-semibold">LOGIN</Text>
+      <View className="gap-4 pt-12">
+        <Text className="text-text text-3xl font-semibold text-center">
+          Přihlásit se
+        </Text>
 
-        <TextInput
-          value={email}
-          onChangeText={setEmail}
-          placeholder="Email"
-          placeholderTextColor={COLORS.tint}
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-          autoComplete="email"
-          textContentType="emailAddress"
-          returnKeyType="next"
-          onSubmitEditing={() => passwordInputRef.current?.focus()}
-          className="rounded-xl bg-secondary px-4 py-3 text-text"
-        />
+        <form.AppForm>
+          <View className="gap-4 px-4 mb-8">
+            <form.AppField
+              name="email"
+              children={(field) => (
+                <field.TextInputField
+                  label="Email"
+                  placeholder="Email"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="email"
+                  textContentType="emailAddress"
+                  returnKeyType="next"
+                />
+              )}
+            />
 
-        <TextInput
-          ref={passwordInputRef}
-          value={password}
-          onChangeText={setPassword}
-          placeholder="Password"
-          placeholderTextColor={COLORS.tint}
-          secureTextEntry
-          autoCapitalize="none"
-          autoCorrect={false}
-          autoComplete="password"
-          textContentType="password"
-          returnKeyType="done"
-          className="rounded-xl bg-secondary px-4 py-3 text-text"
-        />
+            <form.AppField
+              name="password"
+              children={(field) => (
+                <field.TextInputField
+                  label="Heslo"
+                  placeholder="Heslo"
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="password"
+                  textContentType="password"
+                  returnKeyType="done"
+                />
+              )}
+            />
+          </View>
 
-        <TouchableOpacity
-          className="bg-accent py-3 rounded-xl"
-          onPress={handleLogin}
-        >
-          <Text className="text-text text-center font-semibold">LOGIN</Text>
-        </TouchableOpacity>
+          <form.Subscribe
+            selector={(state) => ({
+              email: state.values.email,
+              password: state.values.password,
+            })}
+          >
+            {({ email, password }) => (
+              <form.SubmitButton
+                label="Přihlásit se"
+                pendingLabel="Přihlašuji..."
+                disabled={isDisabled({ email, password })}
+              />
+            )}
+          </form.Subscribe>
+
+          {authError ? (
+            <Text className="text-danger text-sm px-4">{authError}</Text>
+          ) : null}
+        </form.AppForm>
       </View>
     </SafeAreaView>
   );
