@@ -10,7 +10,7 @@ const loginSchema = z.object({
   email: z.string().trim().email("Zadejte platný e-mail"),
   password: z
     .string()
-    .min(12, "Heslo musí mít alespoň 12 znaků")
+    .min(8, "Heslo musí mít alespoň 8 znaků")
     .max(255, "Heslo může mít maximálně 255 znaků"),
 });
 
@@ -106,7 +106,6 @@ export default function Login() {
               <form.SubmitButton
                 label="Přihlásit se"
                 pendingLabel="Přihlašuji..."
-                disabled={isDisabled({ email, password })}
               />
             )}
           </form.Subscribe>
