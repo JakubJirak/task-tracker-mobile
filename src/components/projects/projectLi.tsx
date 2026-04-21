@@ -2,11 +2,14 @@ import { ProjectResource } from "@/client";
 import {
   projectsCompleteMutation,
   projectsDestroyMutation,
-  projectsIndexQueryKey,
   projectsReopenMutation,
   projectsShowQueryKey,
 } from "@/client/@tanstack/react-query.gen";
 import { openEditProjectSheet } from "@/components/projects/editProjectSheet";
+import {
+  invalidateProjectQueries,
+  syncProjectCompletionInCache,
+} from "@/components/projects/projectCache";
 import { COLORS } from "@/constants/COLORS";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -34,41 +37,29 @@ export default function ProjectLi({ project }: { project: ProjectResource }) {
     ? project.created_at
     : format(parsedCreatedAt, "d. MMMM yyyy", { locale: cs });
 
-  const invalidateProjectQueries = async (projectId: number) => {
-    await queryClient.invalidateQueries({
-      predicate: (query) =>
-        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
-        "projectsIndex",
-    });
-    await queryClient.invalidateQueries({
-      predicate: (query) =>
-        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
-        "projectsShow",
-    });
-    await queryClient.refetchQueries({
-      predicate: (query) =>
-        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
-        "projectsIndex",
-      type: "all",
-    });
-
-    await queryClient.invalidateQueries({ queryKey: projectsIndexQueryKey() });
-    await queryClient.invalidateQueries({
-      queryKey: projectsShowQueryKey({ path: { project: projectId } }),
-    });
-  };
-
   const completeProjectMut = useMutation({
     ...projectsCompleteMutation(),
-    onSuccess: async () => {
-      await invalidateProjectQueries(project.id);
+    onMutate: async () => {
+      syncProjectCompletionInCache(queryClient, project.id, true);
+    },
+    onError: () => {
+      syncProjectCompletionInCache(queryClient, project.id, false);
+    },
+    onSettled: async () => {
+      await invalidateProjectQueries(queryClient, project.id);
     },
   });
 
   const reopenProjectMut = useMutation({
     ...projectsReopenMutation(),
-    onSuccess: async () => {
-      await invalidateProjectQueries(project.id);
+    onMutate: async () => {
+      syncProjectCompletionInCache(queryClient, project.id, false);
+    },
+    onError: () => {
+      syncProjectCompletionInCache(queryClient, project.id, true);
+    },
+    onSettled: async () => {
+      await invalidateProjectQueries(queryClient, project.id);
     },
   });
 
@@ -79,7 +70,7 @@ export default function ProjectLi({ project }: { project: ProjectResource }) {
       const deletedProjectId = project.id;
 
       setIsDeleteDialogOpen(false);
-      await invalidateProjectQueries(deletedProjectId);
+      await invalidateProjectQueries(queryClient, deletedProjectId);
       queryClient.removeQueries({
         queryKey: projectsShowQueryKey({ path: { project: deletedProjectId } }),
       });

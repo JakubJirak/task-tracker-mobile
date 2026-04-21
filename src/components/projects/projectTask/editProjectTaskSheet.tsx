@@ -5,6 +5,7 @@ import {
 } from "@/client/@tanstack/react-query.gen";
 import { ProjectTaskResource } from "@/client/types.gen";
 import { useAppForm } from "@/components/forms/formContext";
+import { invalidateProjectQueries } from "@/components/projects/projectCache";
 import { COLORS } from "@/constants/COLORS";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
 import MaterialDesignIcons from "@react-native-vector-icons/material-design-icons";
@@ -70,23 +71,27 @@ export default function EditProjectTaskSheet() {
 
   const editProjectTaskMut = useMutation({
     ...projectsTasksUpdateMutation(),
-    onSuccess: () => {
+    onSuccess: async () => {
       if (!activeProjectTaskDraft) {
         return;
       }
 
       form.reset();
       sheet.current?.dismiss();
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: projectsTasksIndexQueryKey({
           path: { project: activeProjectTaskDraft.project_id },
         }),
       });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: projectsShowQueryKey({
           path: { project: activeProjectTaskDraft.project_id },
         }),
       });
+      await invalidateProjectQueries(
+        queryClient,
+        activeProjectTaskDraft.project_id,
+      );
     },
   });
 

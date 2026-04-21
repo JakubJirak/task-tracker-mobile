@@ -2,11 +2,14 @@ import { ProjectResource } from "@/client";
 import {
   projectsCompleteMutation,
   projectsDestroyMutation,
-  projectsIndexQueryKey,
   projectsReopenMutation,
   projectsShowQueryKey,
 } from "@/client/@tanstack/react-query.gen";
 import { openEditProjectSheet } from "@/components/projects/editProjectSheet";
+import {
+  invalidateProjectQueries,
+  syncProjectCompletionInCache,
+} from "@/components/projects/projectCache";
 import { COLORS } from "@/constants/COLORS";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -27,54 +30,58 @@ export default function ProjectTopBarMenu({ project }: ProjectTopBarMenuProps) {
   const router = useRouter();
   const danger = useCSSVariable("--color-danger");
 
-  const invalidateProjectQueries = async (projectId: number) => {
-    await queryClient.invalidateQueries({
-      predicate: (query) =>
-        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
-        "projectsIndex",
-    });
-    await queryClient.invalidateQueries({
-      predicate: (query) =>
-        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
-        "projectsShow",
-    });
-    await queryClient.refetchQueries({
-      predicate: (query) =>
-        (query.queryKey[0] as { _id?: string } | undefined)?._id ===
-        "projectsIndex",
-      type: "all",
-    });
-
-    await queryClient.invalidateQueries({ queryKey: projectsIndexQueryKey() });
-    await queryClient.invalidateQueries({
-      queryKey: projectsShowQueryKey({ path: { project: projectId } }),
-    });
-  };
-
   const handleAfterProjectCompletion = () => {
     // Reserved for future post-completion behavior.
   };
 
   const completeProjectMut = useMutation({
     ...projectsCompleteMutation(),
-    onSuccess: async () => {
+    onMutate: async () => {
       if (!project) {
         return;
       }
 
-      await invalidateProjectQueries(project.id);
+      syncProjectCompletionInCache(queryClient, project.id, true);
+    },
+    onError: () => {
+      if (!project) {
+        return;
+      }
+
+      syncProjectCompletionInCache(queryClient, project.id, false);
+    },
+    onSettled: async () => {
+      if (!project) {
+        return;
+      }
+
+      await invalidateProjectQueries(queryClient, project.id);
       handleAfterProjectCompletion();
     },
   });
 
   const reopenProjectMut = useMutation({
     ...projectsReopenMutation(),
-    onSuccess: async () => {
+    onMutate: async () => {
       if (!project) {
         return;
       }
 
-      await invalidateProjectQueries(project.id);
+      syncProjectCompletionInCache(queryClient, project.id, false);
+    },
+    onError: () => {
+      if (!project) {
+        return;
+      }
+
+      syncProjectCompletionInCache(queryClient, project.id, true);
+    },
+    onSettled: async () => {
+      if (!project) {
+        return;
+      }
+
+      await invalidateProjectQueries(queryClient, project.id);
       handleAfterProjectCompletion();
     },
   });
@@ -90,7 +97,7 @@ export default function ProjectTopBarMenu({ project }: ProjectTopBarMenuProps) {
       const deletedProjectId = project.id;
 
       setIsDeleteDialogOpen(false);
-      await invalidateProjectQueries(deletedProjectId);
+      await invalidateProjectQueries(queryClient, deletedProjectId);
       queryClient.removeQueries({
         queryKey: projectsShowQueryKey({ path: { project: deletedProjectId } }),
       });

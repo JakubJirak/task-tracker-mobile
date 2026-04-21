@@ -3,6 +3,7 @@ import {
   projectsTasksStoreMutation,
 } from "@/client/@tanstack/react-query.gen";
 import { useAppForm } from "@/components/forms/formContext";
+import { invalidateProjectQueries } from "@/components/projects/projectCache";
 import { COLORS } from "@/constants/COLORS";
 import { useProjectContext } from "@/contexts/ProjectContext";
 import { TrueSheet } from "@lodev09/react-native-true-sheet";
@@ -58,7 +59,7 @@ export default function AddTaskToProjectSheet() {
 
   const addTaskMut = useMutation({
     ...projectsTasksStoreMutation(),
-    onSuccess: () => {
+    onSuccess: async () => {
       form.reset();
       sheet.current?.dismiss();
 
@@ -68,9 +69,10 @@ export default function AddTaskToProjectSheet() {
 
       const currentProjectId: number = projectId;
 
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: projectsShowQueryKey({ path: { project: currentProjectId } }),
       });
+      await invalidateProjectQueries(queryClient, currentProjectId);
     },
   });
 
