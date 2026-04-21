@@ -13,4 +13,4 @@ import type { ClientOptions as ClientOptions2 } from './types.gen';
  */
 export type CreateClientConfig<T extends ClientOptions = ClientOptions2> = (override?: Config<ClientOptions & T>) => Config<Required<ClientOptions> & T>;
 
-export const client = createClient(createConfig<ClientOptions2>({ baseURL: 'http://192.168.1.22:8000/api' }));
+export const client = createClient(createConfig<ClientOptions2>({ baseURL: 'http://192.168.1.23:8000/api' }));
