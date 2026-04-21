@@ -6,6 +6,7 @@ import {
   projectsTasksIndexQueryKey,
   projectsTasksReopenMutation,
 } from "@/client/@tanstack/react-query.gen";
+import { invalidateProjectQueries } from "@/components/projects/projectCache";
 import { openEditProjectTaskSheet } from "@/components/projects/projectTask/editProjectTaskSheet";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -22,36 +23,37 @@ export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
   const queryClient = useQueryClient();
   const danger = useCSSVariable("--color-danger");
 
-  const invalidateTaskQueries = () => {
-    queryClient.invalidateQueries({
+  const invalidateTaskQueries = async () => {
+    await queryClient.invalidateQueries({
       queryKey: projectsTasksIndexQueryKey({
         path: { project: task.project_id },
       }),
     });
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: projectsShowQueryKey({ path: { project: task.project_id } }),
     });
+    await invalidateProjectQueries(queryClient, task.project_id);
   };
 
   const deleteTaskMut = useMutation({
     ...projectsTasksDestroyMutation(),
-    onSuccess: () => {
+    onSuccess: async () => {
       setIsDeleteDialogOpen(false);
-      invalidateTaskQueries();
+      await invalidateTaskQueries();
     },
   });
 
   const completeTaskMut = useMutation({
     ...projectsTasksCompleteMutation(),
-    onSuccess: () => {
-      invalidateTaskQueries();
+    onSuccess: async () => {
+      await invalidateTaskQueries();
     },
   });
 
   const reopenTaskMut = useMutation({
     ...projectsTasksReopenMutation(),
-    onSuccess: () => {
-      invalidateTaskQueries();
+    onSuccess: async () => {
+      await invalidateTaskQueries();
     },
   });
 
@@ -120,10 +122,12 @@ export default function ProjectTaskLi({ task }: { task: ProjectTaskResource }) {
           >
             <View className="bg-secondary p-3 rounded-xl ">
               <View className="flex-row items-center">
-                <Checkbox
-                  className="border border-accent size-5 rounded-md"
-                  isSelected={task.is_completed}
-                />
+                <View pointerEvents="none">
+                  <Checkbox
+                    className="border border-accent size-5 rounded-md"
+                    isSelected={task.is_completed}
+                  />
+                </View>
                 <Text className="flex-1 ml-2 text-text text-base font-medium">
                   {task.title}
                 </Text>

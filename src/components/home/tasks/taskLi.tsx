@@ -168,10 +168,12 @@ export default function TaskLi({
             >
               <View className="bg-secondary p-3 rounded-xl">
                 <View className="flex-row items-center">
-                  <Checkbox
-                    className="border border-accent size-5 rounded-md"
-                    isSelected={isTaskCompleted}
-                  />
+                  <View pointerEvents="none">
+                    <Checkbox
+                      className="border border-accent size-5 rounded-md"
+                      isSelected={isTaskCompleted}
+                    />
+                  </View>
                   <Text className="flex-1 ml-2 text-text text-base/tight font-medium">
                     {task.title}
                   </Text>
